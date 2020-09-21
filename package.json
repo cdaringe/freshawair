@@ -1,0 +1,45 @@
+{
+  "name": "fresh-reason",
+  "version": "0.1.0",
+  "description": "Example Reason Esy Project",
+  "license": "MIT",
+  "esy": {
+    "build": "dune build -p #{self.name}",
+    "buildDev": "refmterr dune build --promote-install-files --root . --only-package #{self.name}",
+    "NOTE": "Optional release Section. Customizes result of `esy release`",
+    "release": {
+      "rewritePrefix": true,
+      "bin": [
+        "Fresh"
+      ]
+    },
+    "buildEnv": {
+      "ODOC_SYNTAX": "re"
+    }
+  },
+  "scripts": {
+    "test": "esy x Fresh",
+    "format": "esy dune build @fmt --auto-promote",
+    "doc": "esy dune build @doc",
+    "types:a": "esy atdgen -t lib/stats.atd",
+    "types:b": "esy atdgen -j lib/stats.atd"
+  },
+  "dependencies": {
+    "@esy-ocaml/reason": ">= 3.6.0 < 4.0.0",
+    "@opam/cohttp": "2.5.4",
+    "@opam/cohttp-lwt-unix": "2.5.4",
+    "@opam/dune": ">=2.6",
+    "@opam/ppx_deriving_yojson": "3.5.3",
+    "@opam/yojson": "1.7.0",
+    "@reason-native/console": "^0.1.0",
+    "@reason-native/pastel": "*",
+    "ocaml": "~4.10.0"
+  },
+  "devDependencies": {
+    "@opam/atdgen": "2.2.1",
+    "@opam/merlin": "*",
+    "@opam/odoc": "*",
+    "@reason-native/rely": "*",
+    "refmterr": "*"
+  }
+}

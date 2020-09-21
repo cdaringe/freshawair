@@ -1,0 +1,4 @@
+(executable
+ (name Fresh)
+ (public_name Fresh)
+ (libraries console.lib lib))
