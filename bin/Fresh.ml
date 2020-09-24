@@ -12,7 +12,9 @@ let respond_string body =
   Server.respond_string ~headers:json_headers ~status:`OK ~body ()
 
 let sense () =
-  read_sensors () >>= fun sensor -> respond_string @@ Lib.Awair.to_json sensor
+  read_sensors () >>= function
+  | Ok sensor -> respond_string @@ Lib.Awair.to_json sensor
+  | Error _ -> Server.respond ~status:`Bad_gateway ~body:`Empty ()
 
 let on_sense_fail _exn =
   Server.respond_string ~headers:json_headers ~status:`Bad_gateway
@@ -21,8 +23,8 @@ let on_sense_fail _exn =
 let on_callback _conn_id _req _body = Lwt.catch sense on_sense_fail
 
 let server ~port =
-  Lwt_io.printf "server started on port %s\n" @@ string_of_int port
-  >>= fun _ ->
+  Console.log @@ "Server " ^ Pastel.green "started" ^ " on port "
+  ^ Pastel.greenBright @@ string_of_int port;
   Server.create ~mode:(`TCP (`Port port)) (Server.make ~callback:on_callback ())
 
 let () = ignore (Lwt_main.run @@ server ~port:8000)

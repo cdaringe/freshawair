@@ -18,11 +18,10 @@
     }
   },
   "scripts": {
-    "test": "esy x Fresh",
+    "build": "esy build",
+    "test": "echo sup",
     "format": "esy dune build @fmt --auto-promote",
-    "doc": "esy dune build @doc",
-    "types:a": "esy atdgen -t lib/stats.atd",
-    "types:b": "esy atdgen -j lib/stats.atd"
+    "doc": "esy dune build @doc"
   },
   "dependencies": {
     "@esy-ocaml/reason": ">= 3.6.0 < 4.0.0",
