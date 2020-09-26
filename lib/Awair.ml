@@ -1,6 +1,7 @@
 open Cohttp
 open Cohttp_lwt_unix
 open Lwt
+open Db
 
 let to_json sensor =
   Yojson.Safe.to_string @@ Stats.local_sensors_stat_to_yojson sensor
@@ -13,3 +14,26 @@ let read_local_sensors ~url =
   res >>= fun x ->
   let resp, body = x in
   body |> Cohttp_lwt.Body.to_string >|= fun body -> from_json body
+
+let save_local_sensor ~conn (s : Stats.local_sensors_stat) =
+  insert ~conn
+    ~query:
+      "insert into sensor_stats values \
+       (%f,%f,%f,%f,%f,%f,%f,%f,%f,%s,%f,%f,%f,%f)"
+    ~params:
+      [|
+        string_of_float s.abs_humid;
+        string_of_float s.co2;
+        string_of_float s.co2_est;
+        string_of_float s.dew_point;
+        string_of_float s.humid;
+        string_of_float s.pm10_est;
+        string_of_float s.pm25;
+        string_of_float s.score;
+        string_of_float s.temp;
+        s.timestamp;
+        string_of_float s.voc;
+        string_of_float s.voc_baseline;
+        string_of_float s.voc_ethanol_raw;
+        string_of_float s.voc_h2_raw;
+      |]

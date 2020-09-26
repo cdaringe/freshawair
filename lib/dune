@@ -4,6 +4,6 @@
   (-w -40 -w +26))
  (public_name fresh-reason)
  (preprocess
-  (pps ppx_deriving_yojson))
- (libraries cohttp cohttp-lwt-unix lwt pastel.lib ppx_deriving_yojson.runtime
-   yojson))
+  (pps ppx_deriving_yojson lwt_ppx))
+ (libraries cohttp core cohttp-lwt-unix lwt pastel.lib
+   ppx_deriving_yojson.runtime yojson ezpostgresql))

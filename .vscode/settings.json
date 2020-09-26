@@ -1,7 +1,7 @@
 {
   "ocaml.sandbox": {
-    "kind": "opam",
-    "switch": "4.10.1"
+    "kind": "esy",
+    "root": "/home/cdaringe/src/freshawair"
   },
   "deno.enable": true
 }

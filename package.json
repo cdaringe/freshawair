@@ -5,17 +5,11 @@
   "license": "MIT",
   "esy": {
     "build": "dune build -p #{self.name}",
-    "buildDev": "refmterr dune build --promote-install-files --root . --only-package #{self.name}",
+    "buildDev":
+      "refmterr dune build --promote-install-files --root . --only-package #{self.name}",
     "NOTE": "Optional release Section. Customizes result of `esy release`",
-    "release": {
-      "rewritePrefix": true,
-      "bin": [
-        "Fresh"
-      ]
-    },
-    "buildEnv": {
-      "ODOC_SYNTAX": "re"
-    }
+    "release": { "rewritePrefix": true, "bin": [ "Fresh" ] },
+    "buildEnv": { "ODOC_SYNTAX": "re" }
   },
   "scripts": {
     "build": "esy build",
@@ -27,18 +21,25 @@
     "@esy-ocaml/reason": ">= 3.6.0 < 4.0.0",
     "@opam/cohttp": "2.5.4",
     "@opam/cohttp-lwt-unix": "2.5.4",
+    "@opam/core": "v0.14.0",
     "@opam/dune": ">=2.6",
+    "@opam/lwt_ppx": "2.0.1",
     "@opam/ppx_deriving_yojson": "3.5.3",
     "@opam/yojson": "1.7.0",
     "@reason-native/console": "^0.1.0",
     "@reason-native/pastel": "*",
-    "ocaml": "~4.10.0"
+    "ezpostgresql": "*",
+    "ocaml": "4.10.1002"
   },
   "devDependencies": {
+    "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
     "@opam/atdgen": "2.2.1",
     "@opam/merlin": "*",
     "@opam/odoc": "*",
     "@reason-native/rely": "*",
     "refmterr": "*"
+  },
+  "resolutions": {
+    "ezpostgresql": "ManasJayanth/ezpostgresql:ezpostgresql.opam#5664b90"
   }
 }
