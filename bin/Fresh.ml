@@ -30,13 +30,15 @@ let create_server_handler ~conn _conn_id _req _body =
 
 exception InitError of string
 
-let with_connection (): Postgresql.connection Lwt.t =
-  Lib.Db.create_connection ~host:"localhost" () >>= function
-  | Ok c -> Lwt.return c
-  | Error (e) -> raise (InitError (Postgresql.string_of_error e))
+let with_connection () : Postgresql.connection Lwt.t =
+  Lib.Db.create_connection ~host:"localhost" ~password:"fresh" ~user:"fresh" ()
+  >|= function
+  | Ok c -> c
+  | Error e -> raise (InitError (Postgresql.string_of_error e))
 
 let server ~port =
   with_connection () >>= fun conn ->
+  let _ = Console.log "connecting to db..." in
   let onconn = create_server_handler ~conn in
   Console.log @@ "Server " ^ Pastel.green "started" ^ " on port "
   ^ Pastel.greenBright @@ string_of_int port;

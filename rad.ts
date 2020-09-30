@@ -3,17 +3,35 @@ import type {
   Tasks,
 } from "https://deno.land/x/rad@v4.1.1/src/mod.ts";
 import { Client } from "https://deno.land/x/postgres@v0.4.5/mod.ts";
+import type { ConnectionOptions } from "https://deno.land/x/postgres@v0.4.5/connection_params.ts";
 
-const dbname = "freshawairdb";
-const dbuser = "postgres";
+const containerName = "freshawairdb";
+const dbname = "fresh";
+const dbuser = "fresh";
+const dbSuperUser = "postgres";
+const dbSuperPassword = dbSuperUser;
 const scripts = JSON.parse(Deno.readTextFileSync("./package.json")).scripts;
+
+const createClient = async (
+  { asSuper, ...rest }: { asSuper?: boolean } & Partial<ConnectionOptions>,
+) => {
+  const pg = new Client({
+    user: `${asSuper ? dbSuperUser : dbuser}`,
+    hostname: `127.0.0.1`,
+    database: `${dbname}`,
+    password: `${asSuper ? dbSuperUser : dbuser}`,
+    port: 5432,
+    ...rest,
+  });
+  await pg.connect();
+  return pg;
+};
 
 const format: Task = {
   fn: ({ sh }) => sh(`deno fmt rad.ts && ${scripts.format}`),
 };
-const start: Task = `esy x refmterr dune exec bin/Fresh.exe`
+const start: Task = `esy x dune exec bin/Fresh.exe`;
 export const tasks: Tasks = {
-  ...{ s: start, start} ,
   ...Object.keys(scripts).reduce(
     (acc, name) => ({ ...acc, [name]: scripts[name] }),
     {},
@@ -21,44 +39,57 @@ export const tasks: Tasks = {
   ...{ f: format, format },
   db: {
     fn: async ({ sh }) => {
-      await sh(`docker rm -f ${dbname}`).catch(() => {});
+      await sh(`docker rm -f ${containerName}`).catch(() => {});
       sh(
-        `docker run -d --name ${dbname} -p 5432:5432 -e POSTGRES_USER=${dbuser} -v $PWD/db:/var/lib/postgresql/data -e POSTGRES_PASSWORD=${dbuser} timescale/timescaledb:latest-pg12`,
+        [
+          `docker run`,
+          `--name ${containerName}`,
+          `-p 5432:5432`,
+          `-e POSTGRES_USER=${dbSuperUser}`,
+          // `-v $PWD/db.init:/docker-entrypoint-initdb.d`,
+          // `-v $PWD/db:/var/lib/postgresql/data`,
+          `-e POSTGRES_PASSWORD=${dbSuperPassword}`,
+          `timescale/timescaledb:latest-pg12`,
+        ].join(" "),
       );
+      // giv the db a fighin chance
+      await new Promise((res) => setTimeout(res, 2000));
+      console.log("\n---\n");
+      let tries = 5;
+      while (tries) {
+        try {
+          await sh(`rad db:init`);
+          break;
+        } catch {
+          await new Promise((res) => setTimeout(res, 500));
+        }
+        --tries;
+        if (!tries) throw new Error("bummer, couldn't init the db");
+      }
+      console.log(`\n\ndb initialized\n\n`)
+    },
+  },
+  "db:init": {
+    async fn({ sh }) {
+      const pgSuper = await createClient(
+        { asSuper: true, database: "postgres" },
+      );
+      const sqlAddUser = await Deno.readTextFile("002_init_user.sql");
+      for (
+        const cmd of sqlAddUser.split("\n").map((s) => s.trim()).filter(Boolean)
+      ) {
+        await pgSuper.query(cmd);
+      }
+      const sqlAddTable = await Deno.readTextFile("004_init_table.sql");
+      const pgStandard = await createClient({});
+      await pgStandard.query(sqlAddTable);
     },
   },
   "db:seed": {
-    fn: async ({ sh, logger }) => {
-      const pg = new Client({
-        user: `${dbuser}`,
-        hostname: `127.0.0.1`,
-        database: `${dbuser}`,
-        password: `${dbuser}`,
-        port: 5432,
-      });
-      await pg.connect();
-      await pg.query(`create table sensor_stats(
-        abs_humid float,
-        co2 float,
-        co2_est float,
-        dew_point float,
-        humid float,
-        pm10_est float,
-        pm25 float,
-        score float,
-        temp float,
-        timestamp timestamp,
-        voc float,
-        voc_baseline float,
-        voc_ethanol_raw float,
-        voc_h2_raw float
-      );`).catch((err) => {
-        if (err && err.message.match(/already exists/)) return;
-        throw err;
-      });
+    fn: async ({ sh }) => {
       const copyQ = "-c '\\copy sensor_stats from STDIN with(format csv)'";
       await sh(
-        `rad db:emitseeddata | docker exec -i ${dbname} psql -U ${dbuser} ${copyQ}`,
+        `rad db:emitseeddata | docker exec -i ${containerName} psql -U ${dbname} ${dbuser} ${copyQ}`,
       );
     },
   },
@@ -75,7 +106,7 @@ export const tasks: Tasks = {
   },
   psql: {
     fn: async ({ sh }) => {
-      await sh("psql -h 127.0.0.1 -U postgres");
+      await sh(`psql -h 127.0.0.1 -U ${dbname} ${dbuser}`);
     },
   },
   wait: {
@@ -83,4 +114,5 @@ export const tasks: Tasks = {
       return 1;
     },
   },
+  ...{ s: start, start },
 };

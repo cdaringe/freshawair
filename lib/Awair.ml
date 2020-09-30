@@ -18,8 +18,21 @@ let read_local_sensors ~url =
 let save_local_sensor ~conn (s : Stats.local_sensors_stat) =
   insert ~conn
     ~query:
-      "insert into sensor_stats values \
-       (%f,%f,%f,%f,%f,%f,%f,%f,%f,%s,%f,%f,%f,%f)"
+      "insert into sensor_stats values (\n\
+      \         $1,\n\
+      \         $2,\n\
+      \         $3,\n\
+      \         $4,\n\
+      \         $5,\n\
+      \         $6,\n\
+      \         $7,\n\
+      \         $8,\n\
+      \         $9,\n\
+      \         $10,\n\
+      \         $11,\n\
+      \         $12,\n\
+      \         $13,\n\
+      \         $14)"
     ~params:
       [|
         string_of_float s.abs_humid;
