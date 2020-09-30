@@ -44,6 +44,7 @@ export const tasks: Tasks = {
         [
           `docker run`,
           `--name ${containerName}`,
+          // `--user $USER`,
           `-p 5432:5432`,
           `-e POSTGRES_USER=${dbSuperUser}`,
           // `-v $PWD/db.init:/docker-entrypoint-initdb.d`,
@@ -52,7 +53,7 @@ export const tasks: Tasks = {
           `timescale/timescaledb:latest-pg12`,
         ].join(" "),
       );
-      // giv the db a fighin chance
+      // giv the db a fightin chance
       await new Promise((res) => setTimeout(res, 2000));
       console.log("\n---\n");
       let tries = 5;
@@ -66,7 +67,7 @@ export const tasks: Tasks = {
         --tries;
         if (!tries) throw new Error("bummer, couldn't init the db");
       }
-      console.log(`\n\ndb initialized\n\n`)
+      console.log(`\n\ndb initialized\n\n`);
     },
   },
   "db:init": {

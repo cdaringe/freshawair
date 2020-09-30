@@ -22,7 +22,6 @@
     "@opam/cohttp": "2.5.4",
     "@opam/cohttp-lwt-unix": "2.5.4",
     "@opam/core": "v0.14.0",
-    "@opam/dune": ">=2.6",
     "@opam/lwt_ppx": "2.0.1",
     "@opam/ppx_deriving_yojson": "3.5.3",
     "@opam/yojson": "1.7.0",
@@ -32,9 +31,11 @@
     "ocaml": "4.10.1002"
   },
   "devDependencies": {
-    "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
     "@opam/atdgen": "2.2.1",
+    "@opam/dune": ">=2.6",
     "@opam/merlin": "*",
+    "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
+    "@opam/ocamlformat": "0.15.0",
     "@opam/odoc": "*",
     "@reason-native/rely": "*",
     "refmterr": "*"
