@@ -26,8 +26,9 @@ let on_sense_fail exn =
     ()
 
 let create_server_handler ~conn _conn_id (req : Request.t) _body =
-  match req.resource with
-  | "/air/stats" -> HandlerGetStats.get_stats conn
+  let uri = Uri.of_string req.resource in
+  match Uri.path uri with
+  | "/air/stats" -> HandlerGetStats.get_stats ~conn ~uri
   | _ -> Lwt.catch (on_sense_request conn) on_sense_fail
 
 exception InitError of string

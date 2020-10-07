@@ -3,7 +3,8 @@ open JsonHacks
 open Lwt
 open Stats
 
-let sql_get_stat = {|
+let sql_get_stat =
+  {|
 declare air_cursor cursor for select
   abs_humid,
   co2,
@@ -22,9 +23,11 @@ declare air_cursor cursor for select
 from sensor_stats
 |}
 
-let stream_air_stats_from_pg_to_http (c : Postgresql.connection) =
+let stream_air_stats_from_pg_to_http ~(conn : Postgresql.connection) ~uri =
   let stat_stream, push = Lwt_stream.create () in
-  let get_cursor_res () = c#exec ~expect:[ Tuples_ok ] "fetch in air_cursor" in
+  let get_cursor_res () =
+    conn#exec ~expect:[ Tuples_ok ] "fetch in air_cursor"
+  in
   let rec get_next_stat cursor =
     if cursor#ntuples <> 0 then (
       let l = Array.to_list @@ cursor#get_tuple 0 in
@@ -38,8 +41,8 @@ let stream_air_stats_from_pg_to_http (c : Postgresql.connection) =
       push None )
   in
   let finally () =
-    ignore (c#exec ~expect:[ Command_ok ] "close air_cursor");
-    ignore (c#exec ~expect:[ Command_ok ] "end")
+    ignore (conn#exec ~expect:[ Command_ok ] "close air_cursor");
+    ignore (conn#exec ~expect:[ Command_ok ] "end")
   in
   let get_body () =
     ignore (Lwt_stream.closed stat_stream >>= fun _ -> Lwt.return @@ finally ());
@@ -47,9 +50,8 @@ let stream_air_stats_from_pg_to_http (c : Postgresql.connection) =
     get_next_stat (get_cursor_res ());
     `Stream stat_stream
   in
-  ignore (c#exec ~expect:[ Command_ok ] "begin");
-  ignore
-    (c#exec ~expect:[ Command_ok ] sql_get_stat);
+  ignore (conn#exec ~expect:[ Command_ok ] "begin");
+  ignore (conn#exec ~expect:[ Command_ok ] sql_get_stat);
   Cohttp_lwt_unix.Server.respond ~headers:json_headers ~status:`OK
     ~body:(get_body ()) ()
 

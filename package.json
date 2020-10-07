@@ -37,6 +37,7 @@
     "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
     "@opam/ocamlformat": "0.15.0",
     "@opam/odoc": "*",
+    "@opam/uri": "3.1.0",
     "@reason-native/rely": "*",
     "refmterr": "*"
   },
