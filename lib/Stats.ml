@@ -15,3 +15,11 @@ type local_sensors_stat = {
   voc_h2_raw : float;
 }
 [@@deriving yojson { exn = true }]
+
+(* legacy code from when shipping iso timestamps down as string, vs
+epoch ms offsets
+*)
+(* let with_serialized_sensor_date i x =
+  match i with 9 -> "\"" ^ x ^ "\"" | _ -> x
+
+let to_serialized_parts = List.mapi with_serialized_sensor_date *)
