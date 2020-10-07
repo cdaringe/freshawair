@@ -3,25 +3,37 @@ open JsonHacks
 open Lwt
 open Stats
 
-let sql_get_stat =
-  {|
+let sql_get_stat binningValue =
+  Printf.sprintf
+    {|
 declare air_cursor cursor for select
-  abs_humid,
-  co2,
-  co2_est,
-  dew_point,
-  humid,
-  pm10_est,
-  pm25,
-  score,
-  temp,
-  extract(epoch from timestamp) * 1000,
-  voc,
-  voc_baseline,
-  voc_ethanol_raw,
-  voc_h2_raw
-from sensor_stats
+  avg(abs_humid),
+  avg(co2),
+  avg(co2_est),
+  avg(dew_point),
+  avg(humid),
+  avg(pm10_est),
+  avg(pm25),
+  avg(score),
+  avg(temp),
+  (extract(epoch from time_bucket('1 %s', timestamp)) * 1000) as bucket,
+  avg(voc),
+  avg(voc_baseline),
+  avg(voc_ethanol_raw),
+  avg(voc_h2_raw)
+from sensor_stats group by bucket order by bucket;
 |}
+    binningValue
+
+let get_binning_value uri =
+  match Uri.get_query_param uri "binningValue" with
+  | Some x -> (
+      match x with
+      | "minute" | "hour" | "day" -> x
+      | _ ->
+          Console.error @@ "invalid binningValue: " ^ x;
+          "hour" )
+  | _ -> "hour"
 
 let stream_air_stats_from_pg_to_http ~(conn : Postgresql.connection) ~uri =
   let stat_stream, push = Lwt_stream.create () in
@@ -51,7 +63,8 @@ let stream_air_stats_from_pg_to_http ~(conn : Postgresql.connection) ~uri =
     `Stream stat_stream
   in
   ignore (conn#exec ~expect:[ Command_ok ] "begin");
-  ignore (conn#exec ~expect:[ Command_ok ] sql_get_stat);
+  ignore
+    (conn#exec ~expect:[ Command_ok ] (sql_get_stat @@ get_binning_value uri));
   Cohttp_lwt_unix.Server.respond ~headers:json_headers ~status:`OK
     ~body:(get_body ()) ()
 
