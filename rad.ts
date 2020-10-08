@@ -27,6 +27,10 @@ const createClient = async (
   return pg;
 };
 
+const armImageName = "armocaml";
+
+const dbi = `docker build -t ${armImageName} .`;
+
 const format: Task = {
   fn: ({ sh }) => sh(`deno fmt rad.ts && ${scripts.format}`),
 };
@@ -113,6 +117,19 @@ export const tasks: Tasks = {
   wait: {
     fn: async () => {
       return 1;
+    },
+  },
+  ...{ dbi, "docker:build:image": dbi },
+  "arm:shell":
+    "docker run -it --rm --entrypoint /bin/bash ocaml/opam2-staging:debian-10-ocaml-4.06-linux-arm32v7",
+  "build:arm": {
+    async fn({ sh }) {
+      await sh(
+        `docker buildx build --progress plain --platform linux/arm/v7 -f Dockerfile.esy-cache -t cdaringe/freshawair:esy-cache  . --load`,
+      );
+      await sh(
+        `docker buildx build --progress plain --platform linux/arm/v7 -t cdaringe/freshawair:arm . --load`,
+      );
     },
   },
   ...{ s: start, start },

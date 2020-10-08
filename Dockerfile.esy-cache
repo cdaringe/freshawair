@@ -1,0 +1,26 @@
+# docker buildx build --progress plain --platform linux/arm/v7 -t deleteme .
+# ... linux/amd64,linux/arm64,
+# https://github.com/esy/esy/blob/master/Dockerfile
+FROM esydev/esy:nightly-alpine-latest AS builder
+RUN esy --version
+WORKDIR /app
+RUN apk add \
+  # for esy
+  curl \
+  git \
+  # opam lib build-time dependencies required by packages in package.json::dependencies
+  m4 \
+  musl-dev \
+  libc-dev \
+  linux-headers \
+  postgresql-client \
+  postgresql-dev \
+  # libpq-dev \
+  # hacks
+  tree
+COPY package.json .
+RUN esy install
+COPY . .
+RUN esy build --release
+RUN tree .
+RUN ls -al

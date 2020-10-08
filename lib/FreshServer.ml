@@ -4,6 +4,11 @@ open Lwt
 open! Postgresql
 open HandlerCommon
 
+(* module Config = struct *)
+type config = { port : int; awair_endpoint : string }
+
+(* end *)
+
 let read_sensors () =
   let url = "http://192.168.0.100/air-data/latest" in
   Awair.read_local_sensors ~url
@@ -25,7 +30,8 @@ let on_sense_fail exn =
     ~body:(Printf.sprintf "Failed to read sensors: %s" (Exn.to_string exn))
     ()
 
-let create_server_handler ~conn _conn_id (req : Request.t) _body =
+let create_server_handler ~conn ~(config : config) _conn_id (req : Request.t)
+    _body =
   let uri = Uri.of_string req.resource in
   match Uri.path uri with
   | "/air/stats" -> HandlerGetStats.get_stats ~conn ~uri
@@ -39,11 +45,11 @@ let with_connection () : Ezpostgresql.connection Lwt.t =
   | Ok c -> c
   | Error e -> raise (InitError (Postgresql.string_of_error e))
 
-let start ~port =
+let start ~(config : config) =
   with_connection () >>= fun conn ->
   let _ = Console.log "connecting to db..." in
-  let onconn = create_server_handler ~conn in
+  let onconn = create_server_handler ~conn ~config in
   Console.log @@ "Server " ^ Pastel.green "started" ^ " on port "
-  ^ Pastel.greenBright @@ string_of_int port;
-  Server.create ~mode:(`TCP (`Port port)) ~on_exn:Console.error
+  ^ Pastel.greenBright @@ string_of_int config.port;
+  Server.create ~mode:(`TCP (`Port config.port)) ~on_exn:Console.error
   @@ Server.make ~callback:onconn ()

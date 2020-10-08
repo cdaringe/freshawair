@@ -1,4 +1,6 @@
 (executable
  (name Fresh)
  (public_name Fresh)
+ (preprocess
+  (pps ppx_jane))
  (libraries lwt lib))
