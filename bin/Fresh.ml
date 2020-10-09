@@ -7,6 +7,8 @@ let cmd =
     Let_syntax.(
       let%map_open uport =
         flag ~doc:"server port, default 8000" "--port" (optional int)
+      and _is_agent = flag ~doc:"run as agent" "--agent" (optional bool)
+      and _is_server = flag ~doc:"run as server" "--server" (optional bool)
       and uawair_endpoint =
         flag ~doc:"awair endpoint, e.g. http://192.168.0.100/api/local_data"
           "--awair" (optional string)
