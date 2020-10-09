@@ -37,13 +37,11 @@ let create_server_handler ~conn ~(config : config) _conn_id (req : Request.t)
   | "/air/stats" -> HandlerGetStats.get_stats ~conn ~uri
   | _ -> Lwt.catch (on_sense_request conn) on_sense_fail
 
-exception InitError of string
-
 let with_connection () : Ezpostgresql.connection Lwt.t =
   Db.create_connection ~host:"localhost" ~password:"fresh" ~user:"fresh" ()
   >|= function
   | Ok c -> c
-  | Error e -> raise (InitError (Postgresql.string_of_error e))
+  | Error e -> raise (Constants.InitError (Postgresql.string_of_error e))
 
 let start ~(config : config) =
   with_connection () >>= fun conn ->

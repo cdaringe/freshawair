@@ -31,7 +31,6 @@
     "ocaml": "4.10.1002"
   },
   "devDependencies": {
-    "@opam/atdgen": "2.2.1",
     "@opam/dune": ">=2.6",
     "@opam/merlin": "*",
     "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",

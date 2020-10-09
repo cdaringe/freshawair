@@ -34,7 +34,7 @@ const dbi = `docker build -t ${armImageName} .`;
 const format: Task = {
   fn: ({ sh }) => sh(`deno fmt rad.ts && ${scripts.format}`),
 };
-const start: Task = `esy x dune exec bin/Fresh.exe`;
+const start: Task = `esy x dune exec -- bin/Fresh.exe -server`;
 export const tasks: Tasks = {
   ...Object.keys(scripts).reduce(
     (acc, name) => ({ ...acc, [name]: scripts[name] }),

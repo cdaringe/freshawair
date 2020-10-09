@@ -1,4 +1,5 @@
-let start ~config = ignore (Lwt_main.run @@ Lib.FreshServer.start ~config : unit)
+let start_server ~config =
+  ignore (Lwt_main.run @@ Lib.FreshServer.start ~config : unit)
 
 let cmd =
   let open Core.Command in
@@ -6,12 +7,12 @@ let cmd =
     ~readme:(fun () -> "More detailed information")
     Let_syntax.(
       let%map_open uport =
-        flag ~doc:"server port, default 8000" "--port" (optional int)
-      and _is_agent = flag ~doc:"run as agent" "--agent" (optional bool)
-      and _is_server = flag ~doc:"run as server" "--server" (optional bool)
+        flag "port" (optional int) ~doc:"#### port, default 8000"
+      and is_agent = flag "agent" no_arg ~doc:"run as agent"
+      and is_server = flag "server" no_arg ~doc:"run as server"
       and uawair_endpoint =
-        flag ~doc:"awair endpoint, e.g. http://192.168.0.100/api/local_data"
-          "--awair" (optional string)
+        flag "--awair" (optional string)
+          ~doc:"awair endpoint, e.g. http://192.168.0.100/api/local_data"
       in
       fun () ->
         let open Option in
@@ -21,6 +22,11 @@ let cmd =
             awair_endpoint = value uawair_endpoint ~default:"arst";
           }
         in
-        start ~config)
+        match (is_agent, is_server) with
+        | _, true -> start_server ~config
+        | true, _ -> Console.log "do agenty thing"
+        | _ ->
+            raise
+              (Lib.Constants.InitError "--agent or --server must be specified"))
 
 let () = Core.Command.run ~version:"1.0" cmd
