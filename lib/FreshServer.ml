@@ -5,7 +5,7 @@ open! Postgresql
 open HandlerCommon
 
 (* module Config = struct *)
-type config = { port : int; awair_endpoint : string }
+type config = { port : int; }
 
 (* end *)
 
