@@ -1,6 +1,6 @@
+let green (s : string) = ANSITerminal.(sprintf [ green ] "%s" s)
 
-let green (s: string) = ANSITerminal.(sprintf [ green; ] "%s" s)
-let red (s: string) = ANSITerminal.(sprintf [ red; ] "%s" s)
+let red (s : string) = ANSITerminal.(sprintf [ red ] "%s" s)
 
 let logger s =
   print_string s;
@@ -9,5 +9,5 @@ let logger s =
 let log = logger
 
 let exn e =
-  let msg = (Core.Exn.to_string e) in
+  let msg = Core.Exn.to_string e in
   logger @@ red msg

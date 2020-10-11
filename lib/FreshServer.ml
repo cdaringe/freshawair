@@ -5,7 +5,7 @@ open! Postgresql
 open HandlerCommon
 
 (* module Config = struct *)
-type config = { port : int; }
+type config = { port : int }
 
 (* end *)
 
@@ -47,7 +47,12 @@ let start ~(config : config) =
   with_connection () >>= fun conn ->
   let _ = Console.log "connecting to db...\n" in
   let onconn = create_server_handler ~conn ~config in
-  Console.log @@ String.(concat ["Server started on port "; (Console.green @@ string_of_int port); "\n"]);
+  ( Console.log
+  @@ String.(
+       concat
+         [
+           "Server started on port "; Console.green @@ string_of_int port; "\n";
+         ]) );
   Out_channel.flush stdout;
   Server.create ~mode:(`TCP (`Port config.port)) ~on_exn:Console.exn
   @@ Server.make ~callback:onconn ()

@@ -21,8 +21,9 @@ let cmd =
             start_server
               ~config:
                 {
-                  port = value uport ~default:8000;
-                  (* awair_endpoint = value uawair_endpoint ~default:"arst"; *)
+                  port =
+                    value uport ~default:8000
+                    (* awair_endpoint = value uawair_endpoint ~default:"arst"; *);
                 }
         | true, _ -> Console.log "do agenty thing"
         | _ ->
