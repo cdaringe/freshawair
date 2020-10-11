@@ -5,15 +5,19 @@ import type {
 import { Client } from "https://deno.land/x/postgres@v0.4.5/mod.ts";
 import type { ConnectionOptions } from "https://deno.land/x/postgres@v0.4.5/connection_params.ts";
 
+const armImageName = "armocaml";
+const armDockerImageTag = "cdaringe/freshawair:arm"
+const scripts = JSON.parse(Deno.readTextFileSync("./package.json")).scripts;
+
+// db
 const containerName = "freshawairdb";
 const dbname = "fresh";
 const dbuser = "fresh";
 const dbSuperUser = "postgres";
 const dbSuperPassword = dbSuperUser;
-const scripts = JSON.parse(Deno.readTextFileSync("./package.json")).scripts;
-
+type CreateClient = { asSuper?: boolean } & Partial<ConnectionOptions>
 const createClient = async (
-  { asSuper, ...rest }: { asSuper?: boolean } & Partial<ConnectionOptions>,
+  { asSuper, ...rest }: CreateClient
 ) => {
   const pg = new Client({
     user: `${asSuper ? dbSuperUser : dbuser}`,
@@ -27,16 +31,66 @@ const createClient = async (
   return pg;
 };
 
-const format: Task = {
-  fn: ({ sh }) => sh(`deno fmt rad.ts && ${scripts.format}`),
-};
+// opam
+const opamSetup: Task = {
+  async fn({ sh }) {
+    try {
+      await sh(`opam switch freshawair`)
+    } catch (err) {
+      await sh(`opam switch create freshawair 4.10.1`)
+    }
+  }
+}
+const opamInstall: Task = {
+  dependsOn: [opamSetup],
+  fn: async ({ sh }) => sh(`bash ./opam.lame.deps.sh`)
+}
+const opamExport: Task = `opam switch export freshawair.opam.deps`
+const opamImport: Task = `opam switch import freshawair.opam.deps`
+
+// tasks
+const dbi = `docker build -t ${armImageName} .`;
+const format: Task = `deno fmt rad.ts && ${scripts.format}`;
 const start: Task = `esy x dune exec bin/Fresh.exe`;
+const buildArmImage: Task = {
+  fn: async ({ sh }) => {
+    const progressArg = "--progress plain"
+    const commands = [
+      // `docker buildx build ${progressArg} --platform linux/arm/v7 -f Dockerfile.esy-cache -t cdaringe/freshawair:esy-cache  . --load`,
+      `docker buildx build ${progressArg} --platform linux/arm/v7 -f Dockerfile -t ${armDockerImageTag}  . --load`,
+      // `docker buildx build ${progressArg} --platform linux/arm/v7 -t ${armDockerImageTag}. --load`,
+    ]
+    for (const cmd of commands) await sh(cmd)
+  },
+};
+const extractArmBin: Task = {
+  dependsOn: [buildArmImage],
+  async fn({ sh, logger }) {
+    const cmds = [
+      `docker create --name extract ${armDockerImageTag}`,
+      `docker cp extract:/app/_build/default/bin/Fresh.exe  ./fresh.arm`,
+    ]
+    try {
+      for (const cmd of cmds) await sh(cmd)
+    } finally {
+      await sh(`docker rm extract`).catch(err => { logger.warning(err) })
+    }
+  }
+}
+const buildArm: Task = {
+  dependsOn: [buildArmImage, extractArmBin]
+}
+
 export const tasks: Tasks = {
   ...Object.keys(scripts).reduce(
     (acc, name) => ({ ...acc, [name]: scripts[name] }),
     {},
   ),
   ...{ f: format, format },
+  ...{ opamInstall, opamSetup },
+  opam: opamInstall,
+  export: opamExport,
+  import: opamImport,
   db: {
     fn: async ({ sh }) => {
       await sh(`docker rm -f ${containerName}`).catch(() => {});
@@ -115,5 +169,10 @@ export const tasks: Tasks = {
       return 1;
     },
   },
+  ...{ dbi, "docker:build:image": dbi },
+  // https://github.com/ocaml/infrastructure/wiki/Containers
+  "arm:shell":
+    "docker run -it --rm --entrypoint /bin/bash --platform linux/arm/v7 ocaml/opam2:debian-stable",
+  ...{ ba: buildArm, "build:arm": buildArm },
   ...{ s: start, start },
 };
