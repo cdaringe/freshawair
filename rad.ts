@@ -113,7 +113,7 @@ export const tasks: Tasks = {
       let tries = 5;
       while (tries) {
         try {
-          await sh(`rad db:init`);
+          await sh(`rad -l info db:init`);
           break;
         } catch {
           await new Promise((res) => setTimeout(res, 500));

@@ -1,2 +1,8 @@
 node_modules
 esy.lock
+.git
+.ci
+.github
+.vscode
+_esy
+_build
