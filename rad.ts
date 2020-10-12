@@ -64,7 +64,7 @@ const buildArmImage: Task = {
     const progressArg = "--progress plain";
     const commands = [
       // `docker buildx build ${progressArg} --platform linux/arm/v7 -f Dockerfile.esy-cache -t cdaringe/freshawair:esy-cache  . --load`,
-      `docker buildx build ${progressArg} --platform linux/arm/v7 -f Dockerfile -t ${armDockerImageTag}  . --load`,
+      `docker buildx build ${progressArg} --platform linux/arm/v7 -f Dockerfile -t ${armDockerImageTag} . --load`,
       // `docker buildx build ${progressArg} --platform linux/arm/v7 -t ${armDockerImageTag}. --load`,
     ];
     for (const cmd of commands) await sh(cmd);
@@ -92,6 +92,11 @@ const buildArm: Task = {
 
 export const tasks: Tasks = {
   ...{ s: start, start },
+  ...{
+    sa:
+      `${start} -- -agent -data-store-endpoint http://localhost:8000/air/stats -poll-duration 10`,
+  },
+  ...{ ss: `${start} -- -server` },
   ...{ f: format, format },
   ...{ opamInstall, opamSetup },
   opam: opamInstall,

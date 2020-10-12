@@ -10,9 +10,16 @@ let cmd =
         flag "port" (optional int) ~doc:"#### port, default 8000"
       and is_agent = flag "agent" no_arg ~doc:"run as agent"
       and is_server = flag "server" no_arg ~doc:"run as server"
-      and _uawair_endpoint =
-        flag "--awair" (optional string)
-          ~doc:"awair endpoint, e.g. http://192.168.0.100/api/local_data"
+      and idata_store_endpoint =
+        flag "data-store-endpoint" (optional string) ~doc:"data store endpoint"
+      and poll_duration =
+        flag "poll-duration" (optional int)
+          ~doc:
+            "poll_duration seconds between awair data capture and uploads, \
+             default 60"
+      and awair_endpoint =
+        flag "awair-endpoint" (optional string)
+          ~doc:"awair endpoint, default http://192.168.0.100/air-data/latest"
       in
       fun () ->
         let open Option in
@@ -25,7 +32,22 @@ let cmd =
                     value uport ~default:8000
                     (* awair_endpoint = value uawair_endpoint ~default:"arst"; *);
                 }
-        | true, _ -> Console.log "do agenty thing"
+        | true, _ ->
+            Lib.Console.log "starting agent";
+            Lib.FreshAgent.start ~init:true
+              ~config:
+                {
+                  poll_duration_s = value poll_duration ~default:60;
+                  data_store_endpoint =
+                    value idata_store_endpoint
+                      ~default:"https://cdaringe.com/api/freshawair";
+                  awair_endpoint =
+                    value awair_endpoint
+                      ~default:"http://192.168.0.100/air-data/latest";
+                }
+              ();
+            let never_resolves, _ = Lwt.wait () in
+            Lwt_main.run never_resolves
         | _ ->
             raise
               (Lib.Constants.InitError "--agent or --server must be specified"))

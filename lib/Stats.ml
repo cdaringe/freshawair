@@ -23,3 +23,9 @@ epoch ms offsets
   match i with 9 -> "\"" ^ x ^ "\"" | _ -> x
 
 let to_serialized_parts = List.mapi with_serialized_sensor_date *)
+
+let stat_to_json (stat : local_sensors_stat) =
+  let ss = local_sensors_stat_to_yojson stat in
+  Yojson.Safe.to_string ss
+
+let str_to_json str = Yojson.Safe.from_string str
