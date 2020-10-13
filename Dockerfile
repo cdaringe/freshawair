@@ -42,3 +42,4 @@ COPY opam.lame.deps.sh .
 RUN eval $(opam env) && opam switch && bash opam.lame.deps.sh
 COPY . .
 RUN opam exec -- dune build --release bin/Fresh.exe
+RUN ./_build/default/bin/Fresh.exe -help

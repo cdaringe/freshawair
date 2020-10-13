@@ -7,20 +7,20 @@ let sql_get_stat binningValue =
   Printf.sprintf
     {|
 declare air_cursor cursor for select
-  avg(abs_humid),
-  avg(co2),
-  avg(co2_est),
-  avg(dew_point),
-  avg(humid),
-  avg(pm10_est),
-  avg(pm25),
-  avg(score),
-  avg(temp),
+  avg(abs_humid) as abs_humid,
+  avg(co2) as co2,
+  avg(co2_est) as co2_est,
+  avg(dew_point) as dew_point,
+  avg(humid) as humid,
+  avg(pm10_est) as pm10_est,
+  avg(pm25) as pm25,
+  avg(score) as score,
+  avg(temp) as temp,
   (extract(epoch from time_bucket('1 %s', timestamp)) * 1000) as bucket,
-  avg(voc),
-  avg(voc_baseline),
-  avg(voc_ethanol_raw),
-  avg(voc_h2_raw)
+  avg(voc) as voc,
+  avg(voc_baseline) as voc_baseline,
+  avg(voc_ethanol_raw) as voc_ethanol_raw,
+  avg(voc_h2_raw) as voc_h2_raw
 from sensor_stats group by bucket order by bucket;
 |}
     binningValue

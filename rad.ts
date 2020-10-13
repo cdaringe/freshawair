@@ -94,7 +94,7 @@ export const tasks: Tasks = {
   ...{ s: start, start },
   ...{
     sa:
-      `${start} -- -agent -data-store-endpoint http://localhost:8000/air/stats -poll-duration 10`,
+      `${start} -- -agent -data-store-endpoint http://localhost:8000/air/stats -poll-duration 60`,
   },
   ...{ ss: `${start} -- -server` },
   ...{ f: format, format },
