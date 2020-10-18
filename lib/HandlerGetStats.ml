@@ -31,7 +31,7 @@ let get_binning_value uri =
       match x with
       | "minute" | "hour" | "day" -> x
       | _ ->
-          Console.log @@ Console.red ("invalid binningValue: " ^ x);
+          Log.error @@ "invalid binningValue: " ^ x;
           "hour" )
   | _ -> "hour"
 

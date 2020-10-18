@@ -25,15 +25,15 @@ let cmd =
         let open Option in
         match (is_agent, is_server) with
         | _, true ->
-            start_server
-              ~config:
-                {
-                  port =
-                    value uport ~default:8000
-                    (* awair_endpoint = value uawair_endpoint ~default:"arst"; *);
-                }
+            let port =
+              value uport
+                ~default:
+                  ( Sys.getenv_opt "PORT" |> value ~default:"8000"
+                  |> int_of_string )
+            in
+            start_server ~config:{ port }
         | true, _ ->
-            Lib.Console.log "starting agent";
+            Lib.Log.info "starting agent";
             Lib.FreshAgent.start ~init:true
               ~config:
                 {
@@ -52,4 +52,4 @@ let cmd =
             raise
               (Lib.Constants.InitError "--agent or --server must be specified"))
 
-let () = Core.Command.run ~version:"1.0" cmd
+let () = Core.Command.run ~version:"0.0.1" cmd

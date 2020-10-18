@@ -1,7 +1,4 @@
-import type {
-  Task,
-  Tasks,
-} from "https://deno.land/x/rad@v4.1.1/src/mod.ts";
+import type { Task, Tasks } from "https://deno.land/x/rad@v4.1.1/src/mod.ts";
 import { Client } from "https://deno.land/x/postgres@v0.4.5/mod.ts";
 import type { ConnectionOptions } from "https://deno.land/x/postgres@v0.4.5/connection_params.ts";
 
@@ -15,9 +12,7 @@ const dbuser = "fresh";
 const dbSuperUser = "postgres";
 const dbSuperPassword = dbSuperUser;
 type CreateClient = { asSuper?: boolean } & Partial<ConnectionOptions>;
-const createClient = async (
-  { asSuper, ...rest }: CreateClient,
-) => {
+const createClient = async ({ asSuper, ...rest }: CreateClient) => {
   const pg = new Client({
     user: `${asSuper ? dbSuperUser : dbuser}`,
     hostname: `127.0.0.1`,
@@ -51,10 +46,7 @@ const opamImport: Task = `opam switch import freshawair.opam.deps`;
 const dbi = `docker build -t ${armImageName} .`;
 const format: Task = {
   async fn({ sh }) {
-    const cmds = [
-      `deno fmt rad.ts`,
-      `dune build @fmt --auto-promote`,
-    ];
+    const cmds = [`deno fmt rad.ts`, `dune build @fmt --auto-promote`];
     await Promise.all(cmds.map((cmd) => sh(cmd)));
   },
 };
@@ -63,9 +55,7 @@ const buildArmImage: Task = {
   fn: async ({ sh }) => {
     const progressArg = "--progress plain";
     const commands = [
-      // `docker buildx build ${progressArg} --platform linux/arm/v7 -f Dockerfile.esy-cache -t cdaringe/freshawair:esy-cache  . --load`,
-      `docker buildx build ${progressArg} --platform linux/arm/v7 -f Dockerfile -t ${armDockerImageTag} . --load`,
-      // `docker buildx build ${progressArg} --platform linux/arm/v7 -t ${armDockerImageTag}. --load`,
+      `docker buildx build ${progressArg} --platform linux/arm/v7 -f Dockerfile.agent -t ${armDockerImageTag} . --load`,
     ];
     for (const cmd of commands) await sh(cmd);
   },
@@ -90,11 +80,18 @@ const buildArm: Task = {
   dependsOn: [buildArmImage, extractArmBin],
 };
 
+const buildServerImage: Task = {
+  async fn({ sh }) {
+    const progressArg = "--progress plain";
+    await sh(
+      `docker buildx build ${progressArg} --platform linux/amd64  -f Dockerfile.server -t cdaringe/freshawair-server .`
+    );
+  },
+};
 export const tasks: Tasks = {
   ...{ s: start, start },
   ...{
-    sa:
-      `${start} -- -agent -data-store-endpoint http://localhost:8000/air/stats -poll-duration 60`,
+    sa: `${start} -- -agent -data-store-endpoint http://localhost:8000/air/stats -poll-duration 60`,
   },
   ...{ ss: `${start} -- -server` },
   ...{ f: format, format },
@@ -117,7 +114,7 @@ export const tasks: Tasks = {
           // `-v $PWD/db:/var/lib/postgresql/data`,
           `-e POSTGRES_PASSWORD=${dbSuperPassword}`,
           `timescale/timescaledb:latest-pg12`,
-        ].join(" "),
+        ].join(" ")
       );
       // giv the db a fightin chance
       await new Promise((res) => setTimeout(res, 2000));
@@ -138,13 +135,15 @@ export const tasks: Tasks = {
   },
   "db:init": {
     async fn({ sh }) {
-      const pgSuper = await createClient(
-        { asSuper: true, database: "postgres" },
-      );
+      const pgSuper = await createClient({
+        asSuper: true,
+        database: "postgres",
+      });
       const sqlAddUser = await Deno.readTextFile("002_init_user.sql");
-      for (
-        const cmd of sqlAddUser.split("\n").map((s) => s.trim()).filter(Boolean)
-      ) {
+      for (const cmd of sqlAddUser
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean)) {
         await pgSuper.query(cmd);
       }
       const sqlAddTable = await Deno.readTextFile("004_init_table.sql");
@@ -156,7 +155,7 @@ export const tasks: Tasks = {
     fn: async ({ sh }) => {
       const copyQ = "-c '\\copy sensor_stats from STDIN with(format csv)'";
       await sh(
-        `rad db:emitseeddata | docker exec -i ${containerName} psql -U ${dbname} ${dbuser} ${copyQ}`,
+        `rad db:emitseeddata | docker exec -i ${containerName} psql -U ${dbname} ${dbuser} ${copyQ}`
       );
     },
   },
@@ -183,4 +182,6 @@ export const tasks: Tasks = {
   buildArmImage,
   extractArmBin,
   ...{ ba: buildArm, "build:arm": buildArm },
+  // server image
+  ...{ buildServerImage, bsi: buildServerImage },
 };

@@ -1,0 +1,31 @@
+FROM ocaml/opam2:debian-stable AS builder
+SHELL ["/bin/bash", "-c"]
+WORKDIR /app
+USER root
+RUN apt-get update -y
+RUN apt-get install -y \
+  # for opam
+  curl \
+  git \
+  # opam lib build-time dependencies required by packages in package.json::dependencies
+  m4 \
+  musl-dev \
+  libc-dev \
+  postgresql-client \
+  libgmp-dev \
+  pkg-config \
+  libpq-dev \
+  # hacks
+  tree
+RUN opam update
+# good luck getting `opam import` to work, or an esy compilation working with
+# arm. just gooooooood luck. so don't. do lame stuff instead.
+COPY opam.deps.sh .
+RUN eval $(opam env) && opam switch && bash opam.deps.sh
+COPY . .
+RUN opam exec -- dune build --release bin/Fresh.exe
+# RUN ./_build/default/bin/Fresh.exe -help
+# FROM alpine
+# WORKDIR /app
+# COPY --from=builder /app/_build/default/bin/Fresh.exe .
+# RUN ./Fresh.exe -help

@@ -1,0 +1,7 @@
+(env
+ (dev
+  (flags
+   (:standard -w +42)))
+ (release
+  (flags
+   (-ccopt -static))))

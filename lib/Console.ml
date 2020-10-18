@@ -11,7 +11,3 @@ let error s =
   Core.Out_channel.flush stderr
 
 let log = logger
-
-let exn e =
-  let msg = Core.Exn.to_string e in
-  logger @@ red msg

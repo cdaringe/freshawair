@@ -38,13 +38,13 @@ let with_connection () : Ezpostgresql.connection Lwt.t =
 
 let start ~(config : config) =
   with_connection () >>= fun conn ->
-  let _ = Console.log "connecting to db...\n" in
+  let _ = Log.info "connecting to db" in
   let onconn = create_server_handler ~conn ~config in
   let msg =
     sprintf "Server started on port %s\n"
     @@ Console.green @@ string_of_int config.port
   in
-  Console.log msg;
+  Log.info msg;
   Out_channel.flush stdout;
-  Server.create ~mode:(`TCP (`Port config.port)) ~on_exn:Console.exn
+  Server.create ~mode:(`TCP (`Port config.port)) ~on_exn:Log.exn
   @@ Server.make ~callback:onconn ()

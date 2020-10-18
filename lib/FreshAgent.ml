@@ -11,8 +11,7 @@ let upload_stat ~uri (stat : Stats.local_sensors_stat) =
   let open Lwt in
   Client.post ~body ~headers:HandlerCommon.json_headers uri
   >|= fun (res, body) ->
-  Console.log @@ Cohttp.Code.string_of_status @@ Response.status res;
-  (* Console.log @@ (match body with | `String s -> s | _ -> "__"); *)
+  Log.debug @@ Cohttp.Code.string_of_status @@ Response.status res;
   (res, body)
 
 let on_sensor_read ~config =
@@ -26,11 +25,11 @@ let on_sensor_read ~config =
   function
   | Ok stat ->
       Lwt.catch (partial_upload stat) (fun e ->
-          Console.exn e;
+          Log.exn e;
           Lwt.return_unit)
   | Error e ->
-      Console.error "failed to read sensor :/";
-      Console.error e;
+      Log.error "failed to read sensor :/";
+      Log.error e;
       Lwt.return ()
 
 let poll_awair ~config =
