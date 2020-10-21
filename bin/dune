@@ -1,6 +1,15 @@
 (executable
- (name Fresh)
- (public_name Fresh)
+ (name Server)
+ (public_name Server)
+ (modules Server)
+ (preprocess
+  (pps ppx_jane))
+ (libraries lwt lib))
+
+(executable
+ (name Agent)
+ (public_name Agent)
+ (modules Agent)
  (preprocess
   (pps ppx_jane))
  (libraries lwt lib))

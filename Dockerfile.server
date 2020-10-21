@@ -3,10 +3,8 @@ WORKDIR /app
 USER root
 RUN apt-get update -y
 RUN apt-get install -y \
-  # for opam
   curl \
   git \
-  # opam lib build-time dependencies required by packages in package.json::dependencies
   m4 \
   musl-dev \
   libc-dev \
@@ -14,7 +12,6 @@ RUN apt-get install -y \
   libgmp-dev \
   pkg-config \
   libpq-dev \
-  # hacks
   tree
 RUN chown -R opam:opam .
 USER opam

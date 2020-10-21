@@ -1,15 +1,19 @@
 type config = {
+  auth_token : string;
   data_store_endpoint : string;
   poll_duration_s : int;
   awair_endpoint : string;
 }
 
-let upload_stat ~uri (stat : Stats.local_sensors_stat) =
+let upload_stat ~uri ~token (stat : Stats.local_sensors_stat) =
   let body = `String (Stats.stat_to_json stat) in
+  let open HandlerCommon in
   let open Cohttp_lwt_unix in
   let open Cohttp_lwt in
   let open Lwt in
-  Client.post ~body ~headers:HandlerCommon.json_headers uri
+  Client.post ~body
+    ~headers:(Cohttp.Header.of_list [ json_headers; auth_header token ])
+    uri
   >|= fun (res, body) ->
   Log.debug @@ Cohttp.Code.string_of_status @@ Response.status res;
   (res, body)
@@ -17,7 +21,9 @@ let upload_stat ~uri (stat : Stats.local_sensors_stat) =
 let on_sensor_read ~config =
   let open Lwt in
   let partial_upload stat () =
-    upload_stat ~uri:(Uri.of_string config.data_store_endpoint) stat
+    upload_stat
+      ~uri:(Uri.of_string config.data_store_endpoint)
+      ~token:config.auth_token stat
     >>= fun _ ->
     (* Console.log @@ Core.Time.to_string @@ Core.Time.now (); *)
     Lwt.return_unit

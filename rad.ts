@@ -46,11 +46,16 @@ const opamImport: Task = `opam switch import freshawair.opam.deps`;
 const dbi = `docker build -t ${armImageName} .`;
 const format: Task = {
   async fn({ sh }) {
-    const cmds = [`deno fmt rad.ts`, `dune build @fmt --auto-promote`];
+    const cmds = [
+      `deno fmt rad.ts`,
+      `opam exec -- dune build @fmt --auto-promote`,
+    ];
     await Promise.all(cmds.map((cmd) => sh(cmd)));
   },
 };
-const start: Task = `dune exec bin/Fresh.exe`;
+
+const startAgent: Task = `opam exec -- dune exec bin/Agent.exe`;
+const startServer: Task = `AUTH_TOKEN=tacos opam exec -- dune exec bin/Server.exe`;
 const buildArmImage: Task = {
   fn: async ({ sh }) => {
     const progressArg = "--progress plain";
@@ -89,11 +94,10 @@ const buildServerImage: Task = {
   },
 };
 export const tasks: Tasks = {
-  ...{ s: start, start },
   ...{
-    sa: `${start} -- -agent -data-store-endpoint http://localhost:8000/air/stats -poll-duration 60`,
+    sa: `${startAgent} -- -data-store-endpoint http://localhost:8000/air/stats -poll-duration 10 -auth-token tacwfos`,
   },
-  ...{ ss: `${start} -- -server` },
+  ...{ ss: startServer },
   ...{ f: format, format },
   ...{ opamInstall, opamSetup },
   opam: opamInstall,
