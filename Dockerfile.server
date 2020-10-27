@@ -1,23 +1,30 @@
-FROM ocaml/opam2:4.10 AS builder
+FROM ocaml/opam2:alpine-3.12-ocaml-4.10 AS builder
 WORKDIR /app
 USER root
-RUN apt-get update -y
-RUN apt-get install -y \
+RUN apk update
+RUN apk add \
   curl \
   git \
   m4 \
   musl-dev \
   libc-dev \
   postgresql-client \
-  libgmp-dev \
-  pkg-config \
-  libpq-dev \
+  gmp-dev \
+  pkgconfig \
+  postgresql-dev \
   tree
+RUN apk add perl linux-headers
 RUN chown -R opam:opam .
 USER opam
 RUN opam init && opam update
 COPY --chown=opam:opam opam.deps.sh .
 RUN eval $(opam env) && opam switch && opam update && bash opam.deps.sh
 COPY --chown=opam:opam . .
-RUN eval $(opam env) && opam exec -- dune build --release bin/Fresh.exe && \
-  ./_build/default/bin/Fresh.exe -help
+RUN eval $(opam env) && opam exec -- dune build --release bin/Server.exe && \
+  ./_build/default/bin/Server.exe -help
+
+FROM ocaml/opam2:alpine-3.12-ocaml-4.10
+COPY --from=builder /app/_build/default/bin/Server.exe .
+CMD [ "Server.exe" ]
+
+

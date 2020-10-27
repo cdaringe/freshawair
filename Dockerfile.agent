@@ -1,31 +1,30 @@
-FROM ocaml/opam2:debian-stable AS builder
-SHELL ["/bin/bash", "-c"]
+FROM ocaml/opam2:alpine-3.12-ocaml-4.10 AS builder
 WORKDIR /app
 USER root
-RUN apt-get update -y
-RUN apt-get install -y \
-  # for opam
+RUN apk update
+RUN apk add \
   curl \
   git \
-  # opam lib build-time dependencies required by packages in package.json::dependencies
   m4 \
   musl-dev \
   libc-dev \
   postgresql-client \
-  libgmp-dev \
-  pkg-config \
-  libpq-dev \
-  # hacks
+  gmp-dev \
+  pkgconfig \
+  postgresql-dev \
   tree
-RUN opam update
-# good luck getting `opam import` to work, or an esy compilation working with
-# arm. just gooooooood luck. so don't. do lame stuff instead.
-COPY opam.deps.sh .
-RUN eval $(opam env) && opam switch && bash opam.deps.sh
-COPY . .
-RUN opam exec -- dune build --release bin/Fresh.exe
-# RUN ./_build/default/bin/Fresh.exe -help
-# FROM alpine
-# WORKDIR /app
-# COPY --from=builder /app/_build/default/bin/Fresh.exe .
-# RUN ./Fresh.exe -help
+RUN apk add perl linux-headers
+RUN chown -R opam:opam .
+USER opam
+RUN opam init && opam update
+COPY --chown=opam:opam opam.deps.sh .
+RUN eval $(opam env) && opam switch && opam update && bash opam.deps.sh
+COPY --chown=opam:opam . .
+RUN eval $(opam env) && opam exec -- dune build --release bin/Agent.exe && \
+  ./_build/default/bin/Agent.exe -help
+
+FROM ocaml/opam2:alpine-3.12-ocaml-4.10
+COPY --from=builder /app/_build/default/bin/Agent.exe .
+CMD [ "Agent.exe" ]
+
+

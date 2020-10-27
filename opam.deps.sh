@@ -2,7 +2,6 @@
 set -ex
 
 opam pin add -y -n git+https://github.com/ManasJayanth/ezpostgresql#5664b90
-opam pin add -y -n git+https://github.com/mirage/hacl#2aae26b
 opam install \
   "ezpostgresql" \
   "ansiterminal" \
