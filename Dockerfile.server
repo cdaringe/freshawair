@@ -23,8 +23,9 @@ COPY --chown=opam:opam . .
 RUN eval $(opam env) && opam exec -- dune build --release bin/Server.exe && \
   ./_build/default/bin/Server.exe -help
 
-FROM ocaml/opam2:alpine-3.12-ocaml-4.10
+FROM alpine:3.12
 COPY --from=builder /app/_build/default/bin/Server.exe .
+RUN apk update && apk add postgresql-client
 CMD [ "Server.exe" ]
 
 
