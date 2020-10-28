@@ -1,0 +1,54 @@
+version: "3.6"
+services:
+  freshagent:
+    image: cdaringe/freshawair:agent
+    networks:
+      - fresh
+    command: ./Agent.exe -auth-token abc -awair-endpoint http://192.168.0.100/air-data/latest -data-store-endpoint http://freshserver:8000
+    restart: "on-failure"
+    # deploy:
+    #   restart_policy:
+    #     condition: on-failure
+    #     delay: 300s
+    #     window: 120s
+
+  freshdb:
+    image: timescale/timescaledb:latest-pg12
+    networks:
+      - fresh
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.freshdb:/var/lib/postgresql/data
+      - ./db.init:/docker-entrypoint-initdb.d
+        # // `-v ./db:/var/lib/postgresql/data`,
+    environment:
+      - POSTGRES_USER=fresh
+      - POSTGRES_PASSWORD=fresh
+      - TIMESCALEDB_TELEMETRY=off
+    restart: "on-failure"
+    # deploy:
+    #   restart_policy:
+    #     condition: on-failure
+    #     delay: 300s
+    #     window: 120s
+
+  freshserver:
+    image: cdaringe/freshawair:server
+    command: ./Server.exe -port 8000 -auth-token abc
+    ports:
+      - "8000:8000"
+    networks:
+      - fresh
+    depends_on:
+      - freshdb
+    restart: "on-failure"
+
+    # deploy:
+    #   restart_policy:
+    #     condition: on-failure
+    #     delay: 300s
+    #     window: 120s
+
+networks:
+  fresh:

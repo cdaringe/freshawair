@@ -6,20 +6,16 @@ const armImageName = "armocaml";
 const armDockerImageTag = "cdaringe/freshawair:arm";
 
 // db
-const containerName = "freshawairdb";
+const containerName = "freshawair_freshdb_1";
 const dbname = "fresh";
 const dbuser = "fresh";
-const dbSuperUser = "postgres";
-const dbSuperPassword = dbSuperUser;
-type CreateClient = { asSuper?: boolean } & Partial<ConnectionOptions>;
-const createClient = async ({ asSuper, ...rest }: CreateClient) => {
+const createClient = async () => {
   const pg = new Client({
-    user: `${asSuper ? dbSuperUser : dbuser}`,
+    user: `${dbuser}`,
     hostname: `127.0.0.1`,
     database: `${dbname}`,
-    password: `${asSuper ? dbSuperUser : dbuser}`,
+    password: `${dbuser}`,
     port: 5432,
-    ...rest,
   });
   await pg.connect();
   return pg;
@@ -106,53 +102,8 @@ export const tasks: Tasks = {
   // db crap
   db: {
     fn: async ({ sh }) => {
-      await sh(`docker rm -f ${containerName}`).catch(() => {});
-      sh(
-        [
-          `docker run`,
-          `--name ${containerName}`,
-          // `--user $USER`,
-          `-p 5432:5432`,
-          `-e POSTGRES_USER=${dbSuperUser}`,
-          // `-v $PWD/db.init:/docker-entrypoint-initdb.d`,
-          // `-v $PWD/db:/var/lib/postgresql/data`,
-          `-e POSTGRES_PASSWORD=${dbSuperPassword}`,
-          `timescale/timescaledb:latest-pg12`,
-        ].join(" ")
-      );
-      // giv the db a fightin chance
-      await new Promise((res) => setTimeout(res, 2000));
-      console.log("\n---\n");
-      let tries = 5;
-      while (tries) {
-        try {
-          await sh(`rad -l info db:init`);
-          break;
-        } catch {
-          await new Promise((res) => setTimeout(res, 500));
-        }
-        --tries;
-        if (!tries) throw new Error("bummer, couldn't init the db");
-      }
-      console.log(`\n\ndb initialized\n\n`);
-    },
-  },
-  "db:init": {
-    async fn({ sh }) {
-      const pgSuper = await createClient({
-        asSuper: true,
-        database: "postgres",
-      });
-      const sqlAddUser = await Deno.readTextFile("002_init_user.sql");
-      for (const cmd of sqlAddUser
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean)) {
-        await pgSuper.query(cmd);
-      }
-      const sqlAddTable = await Deno.readTextFile("004_init_table.sql");
-      const pgStandard = await createClient({});
-      await pgStandard.query(sqlAddTable);
+      await sh(`docker-compose down freshdb -f`).catch(() => {});
+      await sh(`docker-compose up freshdb`).catch(() => {});
     },
   },
   "db:seed": {
@@ -165,10 +116,16 @@ export const tasks: Tasks = {
   },
   "db:emitseeddata": {
     fn() {
+      function addDays(date: Date, days: number) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+      }
+      const getRandDayOffset = () => Math.random() * 365;
       let i = 525_600; // minutes in a year
       while (i) {
         const vals: any[] = Array.from(Array(14)).map(() => Math.random());
-        vals[9] = new Date().toISOString();
+        vals[9] = addDays(new Date(), getRandDayOffset()).toISOString();
         console.log(`${vals.join(",")}`);
         --i;
       }

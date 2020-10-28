@@ -1,0 +1,5 @@
+-- env vars in docker init script already specify PGUSER as fresh, which
+-- creates the role & the associated db. :shrug:
+-- CREATE USER fresh password 'fresh';
+-- CREATE DATABASE fresh;
+-- GRANT ALL PRIVILEGES ON DATABASE fresh TO fresh;
