@@ -5,7 +5,12 @@ open! Postgresql
 open HandlerCommon
 
 (* module Config = struct *)
-type config = { port : int; auth_token : string }
+type config = {
+  port : int;
+  auth_token : string;
+  db_host : string;
+  db_port : int;
+}
 
 (* end *)
 
@@ -34,18 +39,19 @@ let create_server_handler ~conn ~(config : config) _id (req : Request.t) body =
   match (url, req.meth, is_token_matched) with
   | "/air/stats", `GET, true -> HandlerGetStats.get_stats ~conn ~uri
   | "/air/stats", `POST, true -> on_receive_stat ~conn ~body
-  | _, _, false -> Server.respond_error ~status:`Unauthorized ~body:"boo flippin hoo!" ()
+  | _, _, false ->
+      Server.respond_error ~status:`Unauthorized ~body:"boo flippin hoo!" ()
   | _ -> Server.respond_not_found ()
 
-let with_connection () : Ezpostgresql.connection Lwt.t =
-  Db.create_connection ~host:"localhost" ~password:"fresh" ~user:"fresh" ()
+let with_connection ~config : Ezpostgresql.connection Lwt.t =
+  Db.create_connection ~host:config.db_host ~port:config.db_port
+    ~password:"fresh" ~user:"fresh" ()
   >|= function
   | Ok c -> c
   | Error e -> raise (Constants.InitError (Postgresql.string_of_error e))
 
-let start ~(config : config) =
-  with_connection () >>= fun conn ->
-  let _ = Log.info "connecting to db" in
+let on_db_ready ~config conn =
+  Log.info "db connected";
   let onconn = create_server_handler ~conn ~config in
   let msg =
     sprintf "Server started on port %s\n"
@@ -55,3 +61,11 @@ let start ~(config : config) =
   Out_channel.flush stdout;
   Server.create ~mode:(`TCP (`Port config.port)) ~on_exn:Log.exn
   @@ Server.make ~callback:onconn ()
+
+let start ~(config : config) =
+  Log.info "connecting to db";
+  Lwt.catch
+    (fun _ -> with_connection ~config >>= on_db_ready ~config)
+    (fun e ->
+      Log.exn e;
+      raise e)

@@ -25,7 +25,10 @@ RUN eval $(opam env) && opam exec -- dune build --release bin/Server.exe && \
 
 FROM alpine:3.12
 COPY --from=builder /app/_build/default/bin/Server.exe .
-RUN apk update && apk add postgresql-client gmp-dev
-CMD [ "Server.exe" ]
+RUN apk upgrade --update && \
+  apk add -U postgresql-client gmp-dev tzdata && \
+  cp /usr/share/zoneinfo/Asia/Hong_Kong /etc/localtime && \
+  rm -rf /var/cache/apk/*
+CMD [ "Agent.exe" ]CMD [ "Server.exe" ]
 
 

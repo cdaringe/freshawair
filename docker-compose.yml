@@ -6,6 +6,14 @@ services:
       - fresh
     command: ./Agent.exe -auth-token abc -awair-endpoint http://192.168.0.100/air-data/latest -data-store-endpoint http://freshserver:8000
     restart: "on-failure"
+    logging:
+      driver: json-file
+      options:
+        max-size: "200k"
+        max-file: "10"
+    build:
+      context: .
+      dockerfile: ./Dockerfile.agent
     # deploy:
     #   restart_policy:
     #     condition: on-failure
@@ -17,7 +25,8 @@ services:
     networks:
       - fresh
     ports:
-      - "5432:5432"
+      - 5342
+      # - "5432:5432"
     volumes:
       - ./.freshdb:/var/lib/postgresql/data
       - ./db.init:/docker-entrypoint-initdb.d
@@ -27,6 +36,11 @@ services:
       - POSTGRES_PASSWORD=fresh
       - TIMESCALEDB_TELEMETRY=off
     restart: "on-failure"
+    logging:
+      driver: json-file
+      options:
+        max-size: "200k"
+        max-file: "10"
     # deploy:
     #   restart_policy:
     #     condition: on-failure
@@ -35,15 +49,22 @@ services:
 
   freshserver:
     image: cdaringe/freshawair:server
-    command: ./Server.exe -port 8000 -auth-token abc
+    command: ./Server.exe -port 8000 -auth-token abc -db-host freshdb -db-port 5432
     ports:
-      - "8000:8000"
+      - 8000
     networks:
       - fresh
     depends_on:
       - freshdb
     restart: "on-failure"
-
+    logging:
+      driver: json-file
+      options:
+        max-size: "200k"
+        max-file: "10"
+    build:
+      context: .
+      dockerfile: ./Dockerfile.server
     # deploy:
     #   restart_policy:
     #     condition: on-failure
