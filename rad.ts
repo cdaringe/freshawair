@@ -51,8 +51,7 @@ const format: Task = {
 };
 
 const startAgent: Task = `opam exec -- dune exec bin/Agent.exe`;
-const startServer: Task =
-  `AUTH_TOKEN=tacos opam exec -- dune exec bin/Server.exe`;
+const startServer: Task = `opam exec -- dune exec bin/Server.exe -- -auth-token abc`;
 const buildArmImage: Task = {
   fn: async ({ sh }) => {
     const progressArg = "--progress plain";
@@ -86,14 +85,13 @@ const buildServerImage: Task = {
   async fn({ sh }) {
     const progressArg = "--progress plain";
     await sh(
-      `docker buildx build ${progressArg} --platform linux/amd64  -f Dockerfile.server -t cdaringe/freshawair-server .`,
+      `docker buildx build ${progressArg} --platform linux/amd64  -f Dockerfile.server -t cdaringe/freshawair-server .`
     );
   },
 };
 export const tasks: Tasks = {
   ...{
-    sa:
-      `${startAgent} -- -data-store-endpoint http://localhost:8000/air/stats -poll-duration 10 -auth-token tacwfos`,
+    sa: `${startAgent} -- -data-store-endpoint http://localhost:8000/air/stats -poll-duration 10 -auth-token abc`,
   },
   ...{ ss: startServer },
   ...{ f: format, format },
@@ -112,7 +110,7 @@ export const tasks: Tasks = {
     fn: async ({ sh }) => {
       const copyQ = "-c '\\copy sensor_stats from STDIN with(format csv)'";
       await sh(
-        `rad db:emitseeddata | docker exec -i ${containerName} psql -U ${dbname} ${dbuser} ${copyQ}`,
+        `rad db:emitseeddata | docker exec -i ${containerName} psql -U ${dbname} ${dbuser} ${copyQ}`
       );
     },
   },

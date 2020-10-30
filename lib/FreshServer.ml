@@ -55,7 +55,7 @@ let on_db_ready ~config conn =
   let onconn = create_server_handler ~conn ~config in
   let msg =
     sprintf "Server started on port %s\n"
-    @@ Console.green @@ string_of_int config.port
+    @@ string_of_int config.port
   in
   Log.info msg;
   Out_channel.flush stdout;

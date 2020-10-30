@@ -36,7 +36,7 @@ let cmd =
               auth_token;
               data_store_endpoint =
                 value idata_store_endpoint
-                  ~default:"https://cdaringe.com/api/freshawair";
+                  ~default:"https://192.168.0.36/air/stats";
               awair_endpoint =
                 value awair_endpoint
                   ~default:"http://192.168.0.100/air-data/latest";
