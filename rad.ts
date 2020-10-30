@@ -1,6 +1,6 @@
 import type { Task, Tasks } from "https://deno.land/x/rad@v4.1.1/src/mod.ts";
 import { Client } from "https://deno.land/x/postgres@v0.4.5/mod.ts";
-import type { ConnectionOptions } from "https://deno.land/x/postgres@v0.4.5/connection_params.ts";
+import addMinutes from "https://deno.land/x/date_fns@v2.15.0/addMinutes/index.js";
 
 const armImageName = "armocaml";
 const armDockerImageTag = "cdaringe/freshawair:arm";
@@ -116,18 +116,17 @@ export const tasks: Tasks = {
   },
   "db:emitseeddata": {
     fn() {
-      function addDays(date: Date, days: number) {
-        var result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
-      }
-      const getRandDayOffset = () => Math.random() * 365;
-      let i = 525_600; // minutes in a year
-      while (i) {
-        const vals: any[] = Array.from(Array(14)).map(() => Math.random());
-        vals[9] = addDays(new Date(), getRandDayOffset()).toISOString();
+      const now = new Date();
+      const degreesToRadians = (deg: number) => (deg / 360) * Math.PI * 2;
+      let i = 0; // minutes in a year
+      while (i < 525_600) {
+        const vals: any[] = Array.from(Array(14)).map(() =>
+          Math.sin(degreesToRadians(i))
+        );
+        // timestamp
+        vals[9] = addMinutes(now, i).toISOString();
         console.log(`${vals.join(",")}`);
-        --i;
+        ++i;
       }
     },
   },

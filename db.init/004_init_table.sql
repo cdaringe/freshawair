@@ -14,3 +14,4 @@ create table fresh.public.sensor_stats(
   voc_ethanol_raw float,
   voc_h2_raw float
 );
+SELECT create_hypertable('fresh.public.sensor_stats', 'timestamp');

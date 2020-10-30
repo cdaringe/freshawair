@@ -37,7 +37,8 @@ let create_server_handler ~conn ~(config : config) _id (req : Request.t) body =
   in
   let is_token_matched = equal_string config.auth_token auth_token in
   match (url, req.meth, is_token_matched) with
-  | "/air/stats", `GET, true -> HandlerGetStats.get_stats ~conn ~uri
+  | "/air/stats", `OPTIONS, _ -> Server.respond ~headers:(Cohttp.Header.of_list [ HandlerCommon.cors_header ]) ~status:`OK ~body:`Empty ()
+  | "/air/stats", `GET, _ -> HandlerGetStats.get_stats ~conn ~uri
   | "/air/stats", `POST, true -> on_receive_stat ~conn ~body
   | _, _, false ->
       Server.respond_error ~status:`Unauthorized ~body:"boo flippin hoo!" ()
