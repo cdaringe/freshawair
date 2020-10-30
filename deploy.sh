@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -exo pipefail
 
+# if [ -n "$NAS_IP" ]; then
+#   echo no NAS_IP $NAS_IP
+#   exit 1
+# fi
 dest_dir=/volume1/docker/freshawair
 
 function ssh_cmd () {
