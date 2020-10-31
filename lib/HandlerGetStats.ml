@@ -21,7 +21,8 @@ declare air_cursor cursor for select
   avg(voc_baseline) as voc_baseline,
   avg(voc_ethanol_raw) as voc_ethanol_raw,
   avg(voc_h2_raw) as voc_h2_raw
-from sensor_stats group by bucket order by bucket
+from sensor_stats group by bucket
+order by bucket desc
 limit 100000;
 |}
     binningValue
