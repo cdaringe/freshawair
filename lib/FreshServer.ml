@@ -32,16 +32,16 @@ let on_receive_stat ~conn ~body =
 let create_server_handler ~conn ~(config : config) _id (req : Request.t) body =
   let uri = Uri.of_string req.resource in
   let url = Uri.path uri in
-  let auth_token =
+  (* let auth_token =
     Option.value ~default:"" (Cohttp.Header.get req.headers "authorization")
-  in
-  let is_token_matched = equal_string config.auth_token auth_token in
-  match (url, req.meth, is_token_matched) with
-  | "/air/stats", `OPTIONS, _ -> Server.respond ~headers:(Cohttp.Header.of_list [ HandlerCommon.cors_header ]) ~status:`OK ~body:`Empty ()
-  | "/air/stats", `GET, _ -> HandlerGetStats.get_stats ~conn ~uri
-  | "/air/stats", `POST, true -> on_receive_stat ~conn ~body
-  | _, _, false ->
-      Server.respond_error ~status:`Unauthorized ~body:"boo flippin hoo!" ()
+  in *)
+  (* let is_token_matched = equal_string config.auth_token auth_token in *)
+  match (url, req.meth) with
+  | "/air/stats", `OPTIONS -> Server.respond ~headers:(Cohttp.Header.of_list [ HandlerCommon.cors_header ]) ~status:`OK ~body:`Empty ()
+  | "/air/stats", `GET -> HandlerGetStats.get_stats ~conn ~uri
+  | "/air/stats", `POST -> on_receive_stat ~conn ~body
+  (* | _, _ ->
+      Server.respond_error ~status:`Unauthorized ~body:"boo flippin hoo!" () *)
   | _ -> Server.respond_not_found ()
 
 let with_connection ~config : Ezpostgresql.connection Lwt.t =

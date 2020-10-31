@@ -1,5 +1,23 @@
 version: "3.6"
 services:
+  freshserver:
+    image: cdaringe/freshawair:server
+    command: ./Server.exe -port 8000 -auth-token abc -db-host freshdb -db-port 5432
+    ports:
+      - 8000:8000
+    networks:
+      - fresh
+    depends_on:
+      - freshdb
+    restart: "on-failure"
+    logging:
+      driver: json-file
+      options:
+        max-size: "200k"
+        max-file: "10"
+    build:
+      context: .
+      dockerfile: ./Dockerfile.server
   freshagent:
     image: cdaringe/freshawair:agent
     networks:
@@ -41,30 +59,6 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    # deploy:
-    #   restart_policy:
-    #     condition: on-failure
-    #     delay: 300s
-    #     window: 120s
-
-  freshserver:
-    image: cdaringe/freshawair:server
-    command: ./Server.exe -port 8000 -auth-token abc -db-host freshdb -db-port 5432
-    ports:
-      - 8000:8000
-    networks:
-      - fresh
-    depends_on:
-      - freshdb
-    restart: "on-failure"
-    logging:
-      driver: json-file
-      options:
-        max-size: "200k"
-        max-file: "10"
-    build:
-      context: .
-      dockerfile: ./Dockerfile.server
     # deploy:
     #   restart_policy:
     #     condition: on-failure
