@@ -1,0 +1,5 @@
+version: "3.6"
+services:
+  freshdb:
+    ports:
+      - "5432:5432"

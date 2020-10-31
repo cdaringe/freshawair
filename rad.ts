@@ -1,25 +1,12 @@
 import type { Task, Tasks } from "https://deno.land/x/rad@v4.1.1/src/mod.ts";
-import { Client } from "https://deno.land/x/postgres@v0.4.5/mod.ts";
 import addMinutes from "https://deno.land/x/date_fns@v2.15.0/addMinutes/index.js";
 
-const armImageName = "armocaml";
-const armDockerImageTag = "cdaringe/freshawair:arm";
+const composeDevArgs = "-f docker-compose.yml -f docker-compose.dev.yml";
 
 // db
 const containerName = "freshawair_freshdb_1";
 const dbname = "fresh";
 const dbuser = "fresh";
-const createClient = async () => {
-  const pg = new Client({
-    user: `${dbuser}`,
-    hostname: `127.0.0.1`,
-    database: `${dbname}`,
-    password: `${dbuser}`,
-    port: 5432,
-  });
-  await pg.connect();
-  return pg;
-};
 
 // opam
 const opamSetup: Task = {
@@ -39,7 +26,6 @@ const opamExport: Task = `opam switch export freshawair.opam.deps`;
 const opamImport: Task = `opam switch import freshawair.opam.deps`;
 
 // tasks
-const dbi = `docker build -t ${armImageName} .`;
 const format: Task = {
   async fn({ sh }) {
     const cmds = [
@@ -51,47 +37,13 @@ const format: Task = {
 };
 
 const startAgent: Task = `opam exec -- dune exec bin/Agent.exe`;
-const startServer: Task = `opam exec -- dune exec bin/Server.exe -- -auth-token abc`;
-const buildArmImage: Task = {
-  fn: async ({ sh }) => {
-    const progressArg = "--progress plain";
-    const commands = [
-      `docker buildx build ${progressArg} --platform linux/arm/v7 -f Dockerfile.agent -t ${armDockerImageTag} . --load`,
-    ];
-    for (const cmd of commands) await sh(cmd);
-  },
-};
-const extractArmBin: Task = {
-  dependsOn: [buildArmImage],
-  async fn({ sh, logger }) {
-    const cmds = [
-      `docker create --name extract ${armDockerImageTag}`,
-      `docker cp extract:/app/_build/default/bin/Fresh.exe  ./fresh.arm`,
-    ];
-    try {
-      for (const cmd of cmds) await sh(cmd);
-    } finally {
-      await sh(`docker rm extract`).catch((err) => {
-        logger.warning(err);
-      });
-    }
-  },
-};
-const buildArm: Task = {
-  dependsOn: [buildArmImage, extractArmBin],
-};
+const startServer: Task =
+  `opam exec -- dune exec bin/Server.exe -- -auth-token abc`;
 
-const buildServerImage: Task = {
-  async fn({ sh }) {
-    const progressArg = "--progress plain";
-    await sh(
-      `docker buildx build ${progressArg} --platform linux/amd64  -f Dockerfile.server -t cdaringe/freshawair-server .`
-    );
-  },
-};
 export const tasks: Tasks = {
   ...{
-    sa: `${startAgent} -- -data-store-endpoint http://localhost:8000/air/stats -poll-duration 10 -auth-token abc`,
+    sa:
+      `${startAgent} -- -data-store-endpoint http://localhost:8000/air/stats -poll-duration 10 -auth-token abc`,
   },
   ...{ ss: startServer },
   ...{ f: format, format },
@@ -102,15 +54,17 @@ export const tasks: Tasks = {
   // db crap
   db: {
     fn: async ({ sh }) => {
-      await sh(`docker-compose down freshdb -f`).catch(() => {});
-      await sh(`docker-compose up freshdb`).catch(() => {});
+      await sh(`docker-compose ${composeDevArgs} down freshdb -f`).catch(
+        () => {},
+      );
+      await sh(`docker-compose ${composeDevArgs} up freshdb`).catch(() => {});
     },
   },
   "db:seed": {
     fn: async ({ sh }) => {
       const copyQ = "-c '\\copy sensor_stats from STDIN with(format csv)'";
       await sh(
-        `rad db:emitseeddata | docker exec -i ${containerName} psql -U ${dbname} ${dbuser} ${copyQ}`
+        `rad db:emitseeddata | docker exec -i ${containerName} psql -U ${dbname} ${dbuser} ${copyQ}`,
       );
     },
   },
@@ -135,13 +89,4 @@ export const tasks: Tasks = {
       await sh(`psql -h 127.0.0.1 -U ${dbname} ${dbuser}`);
     },
   },
-  // arm crap
-  // https://github.com/ocaml/infrastructure/wiki/Containers
-  "arm:shell":
-    "docker run -it --rm --entrypoint /bin/bash --platform linux/arm/v7 ocaml/opam2:debian-stable",
-  buildArmImage,
-  extractArmBin,
-  ...{ ba: buildArm, "build:arm": buildArm },
-  // server image
-  ...{ buildServerImage, bsi: buildServerImage },
 };

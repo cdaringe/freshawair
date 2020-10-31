@@ -33,13 +33,19 @@ let create_server_handler ~conn ~(config : config) _id (req : Request.t) body =
   let uri = Uri.of_string req.resource in
   let url = Uri.path uri in
   (* let auth_token =
-    Option.value ~default:"" (Cohttp.Header.get req.headers "authorization")
-  in *)
+       Option.value ~default:"" (Cohttp.Header.get req.headers "authorization")
+     in *)
   (* let is_token_matched = equal_string config.auth_token auth_token in *)
   match (url, req.meth) with
-  | "/air/stats", `OPTIONS -> Server.respond ~headers:(Cohttp.Header.of_list [ HandlerCommon.cors_header ]) ~status:`OK ~body:`Empty ()
+  | "/air/stats", `OPTIONS ->
+      Server.respond
+        ~headers:(Cohttp.Header.of_list [ HandlerCommon.cors_header ])
+        ~status:`OK ~body:`Empty ()
   | "/air/stats", `GET -> HandlerGetStats.get_stats ~conn ~uri
   | "/air/stats", `POST -> on_receive_stat ~conn ~body
+  | _, `GET ->
+      HandlerFs.serve ~info:"static-file-serve" ~docroot:"public"
+        ~index:"index.html" uri url
   (* | _, _ ->
       Server.respond_error ~status:`Unauthorized ~body:"boo flippin hoo!" () *)
   | _ -> Server.respond_not_found ()
@@ -55,8 +61,7 @@ let on_db_ready ~config conn =
   Log.info "db connected";
   let onconn = create_server_handler ~conn ~config in
   let msg =
-    sprintf "Server started on port %s\n"
-    @@ string_of_int config.port
+    sprintf "Server started on port %s\n" @@ string_of_int config.port
   in
   Log.info msg;
   Out_channel.flush stdout;

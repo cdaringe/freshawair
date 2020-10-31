@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -exo pipefail
 
-files_to_sync=("db.init" "docker-compose.yml" "deploy.start.sh")
+files_to_sync=("db.init" "docker-compose.yml" "deploy.start.sh" "public")
 
 
 # if [ -n "$NAS_IP" ]; then
@@ -9,6 +9,12 @@ files_to_sync=("db.init" "docker-compose.yml" "deploy.start.sh")
 #   exit 1
 # fi
 dest_dir=/volume1/docker/freshawair
+ui_src="~/src/freshawair-ui"
+
+echo building ui app
+$(cd $ui_src && yarn build)
+rm -rf public
+mv $ui_src/build public
 
 function ssh_cmd () {
   ssh $NAS_IP -- "$@"
