@@ -9,11 +9,11 @@ dest_dir=/volume1/docker/freshawair
 ui_src="$HOME/src/freshawair-ui"
 curr_dir=$(dirname $PWD/a)
 
-echo building ui app
+printf "\nbuilding ui app\n\n"
+rm -rf public
 cd "$ui_src"
 yarn build
-rm -rf public
-mv $ui_src/build public
+cp -r "$ui_src/build" $curr_dir/public
 cd $curr_dir
 
 function ssh_cmd () {
@@ -22,8 +22,9 @@ function ssh_cmd () {
 
 ssh_cmd mkdir -p $dest_dir
 
+printf "\nsyncing\n\n"
 rsync -av \
-  --exclude-from=".gitignore" \
+  --exclude-from=".rsyncignore" \
   $PWD/ \
   $NAS_IP:$dest_dir/
 
