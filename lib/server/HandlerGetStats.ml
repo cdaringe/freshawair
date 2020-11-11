@@ -1,7 +1,8 @@
-open HandlerCommon
+open Freshcommon.HandlerCommon
 open JsonHacks
 open Lwt
-open Stats
+open Freshmodel
+open Freshcommon
 
 let sql_get_stat binningValue =
   Printf.sprintf

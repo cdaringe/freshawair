@@ -29,8 +29,7 @@ let cmd =
               | Some x -> x
               | _ -> raise (Missing_auth_token "missing auth toke"))
         in
-        Lib.Log.info "starting agent";
-        Lib.FreshAgent.start ~init:true
+        Freshagent.Agent.start ~init:true
           ~config:
             {
               auth_token;

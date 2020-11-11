@@ -1,0 +1,8 @@
+(library
+ (name freshmodel)
+ ;  (flags
+ ;   (-w -40 -w +26))
+ ;  (public_name freshmodel)
+ (preprocess
+  (pps ppx_deriving_yojson lwt_ppx))
+ (libraries opium core lwt ppx_deriving_yojson.runtime yojson))

@@ -1,0 +1,8 @@
+(library
+ (name freshserver)
+ (flags
+  (-w -40 -w +26))
+ ;  (public_name fresh-reason)
+ ;  (preprocess
+ ;   (pps ppx_deriving_yojson lwt_ppx))
+ (libraries freshcommon freshmodel opium core lwt ezpostgresql))

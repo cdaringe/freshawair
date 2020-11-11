@@ -1,7 +1,3 @@
-let green (s : string) = ANSITerminal.(sprintf [ green ] "%s" s)
-
-let red (s : string) = ANSITerminal.(sprintf [ red ] "%s" s)
-
 let logger s =
   print_string @@ s ^ "\n";
   Core.Out_channel.flush stdout

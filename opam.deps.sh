@@ -1,12 +1,11 @@
 #!/usr/bin/env sh
 set -ex
 
-opam pin add -y -n git+https://github.com/ManasJayanth/ezpostgresql#5664b90
+# remove pin pending merge of https://github.com/bobbypriambodo/ezpostgresql/pull/6
+opam pin add -y -n git+https://github.com/cdaringe/ezpostgresql#c8b6af1
 opam install \
   "ezpostgresql" \
-  "ansiterminal" \
-  "cohttp-lwt-unix" \
-  "cohttp" \
+  "opium" \
   "core" \
   "dune" \
   "lwt_ppx" \

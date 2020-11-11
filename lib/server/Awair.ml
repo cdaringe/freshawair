@@ -4,10 +4,10 @@ open Lwt
 open Db
 
 let to_json sensor =
-  Yojson.Safe.to_string @@ Stats.local_sensors_stat_to_yojson sensor
+  Yojson.Safe.to_string @@ Freshmodel.local_sensors_stat_to_yojson sensor
 
 let from_json sensor_str =
-  Stats.local_sensors_stat_of_yojson (Yojson.Safe.from_string sensor_str)
+  Freshmodel.local_sensors_stat_of_yojson (Yojson.Safe.from_string sensor_str)
 
 let read_local_sensors ~url =
   let res = Client.get @@ Uri.of_string url in
@@ -15,7 +15,7 @@ let read_local_sensors ~url =
   let resp, body = x in
   body |> Cohttp_lwt.Body.to_string >|= fun body -> from_json body
 
-let save_local_sensor ~conn (s : Stats.local_sensors_stat) =
+let save_local_sensor ~conn (s : Freshmodel.local_sensors_stat) =
   insert ~conn
     ~query:
       "insert into sensor_stats values (\n\

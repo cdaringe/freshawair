@@ -39,6 +39,7 @@ const format: Task = {
 const startAgent: Task = `opam exec -- dune exec bin/Agent.exe`;
 const startServer: Task =
   `opam exec -- dune exec bin/Server.exe -- -auth-token abc`;
+// const startServer: Task = `opam exec -- dune exec bin/Server.exe`;
 
 export const tasks: Tasks = {
   ...{
@@ -54,9 +55,9 @@ export const tasks: Tasks = {
   // db crap
   db: {
     fn: async ({ sh }) => {
-      await sh(`docker-compose ${composeDevArgs} down freshdb -f`).catch(
-        () => {},
-      );
+      await sh(
+        `docker-compose ${composeDevArgs} down freshdb -f`,
+      ).catch(() => {});
       await sh(`docker-compose ${composeDevArgs} up freshdb`).catch(() => {});
     },
   },

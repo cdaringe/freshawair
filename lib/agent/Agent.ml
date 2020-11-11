@@ -1,3 +1,5 @@
+open Freshcommon
+
 type config = {
   auth_token : string;
   data_store_endpoint : string;
@@ -5,9 +7,9 @@ type config = {
   awair_endpoint : string;
 }
 
-let upload_stat ~uri ~token (stat : Stats.local_sensors_stat) =
-  let body = `String (Stats.stat_to_json stat) in
-  let open HandlerCommon in
+let upload_stat ~uri ~token (stat : Freshmodel.local_sensors_stat) =
+  let body = `String (Freshmodel.stat_to_json stat) in
+  let open Freshcommon.HandlerCommon in
   let open Cohttp_lwt_unix in
   let open Cohttp_lwt in
   let open Lwt in
@@ -15,7 +17,7 @@ let upload_stat ~uri ~token (stat : Stats.local_sensors_stat) =
     ~headers:(Cohttp.Header.of_list [ json_headers; auth_header token ])
     uri
   >|= fun (res, body) ->
-  Log.debug @@ Cohttp.Code.string_of_status @@ Response.status res;
+  Freshcommon.Log.debug @@ Cohttp.Code.string_of_status @@ Response.status res;
   (res, body)
 
 let on_sensor_read ~config =
