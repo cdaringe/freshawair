@@ -6,3 +6,4 @@ esy.lock
 .vscode
 _esy
 _build
+.freshdb
