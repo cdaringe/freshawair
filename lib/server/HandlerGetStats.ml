@@ -68,8 +68,6 @@ let stream_air_stats_from_pg_to_http ~(conn : Postgresql.connection) ~uri =
   ignore (conn#exec ~expect:[ Command_ok ] "begin");
   ignore
     (conn#exec ~expect:[ Command_ok ] (sql_get_stat @@ get_binning_value uri));
-  Cohttp_lwt_unix.Server.respond
-    ~headers:(Cohttp.Header.of_list [ json_headers; cors_header ])
-    ~status:`OK ~body:(get_body ()) ()
+  get_body ()
 
-let get_stats = stream_air_stats_from_pg_to_http
+let get_stats_stream = stream_air_stats_from_pg_to_http

@@ -29,6 +29,6 @@ RUN apk upgrade --update && \
   apk add -U postgresql-client gmp-dev tzdata && \
   cp /usr/share/zoneinfo/Asia/Hong_Kong /etc/localtime && \
   rm -rf /var/cache/apk/*
-CMD [ "Agent.exe" ]CMD [ "Server.exe" ]
+CMD [ "Server.exe" ]
 
 
