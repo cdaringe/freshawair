@@ -16,9 +16,11 @@ Access your Awair data from a user hosted web-app.
 
 ## usage
 
-At current time, even though there are [docker images](https://hub.docker.com/repository/docker/cdaringe/freshawair), the only supported mechanism for build is following:
+At the current time, even though there are [docker images](https://hub.docker.com/repository/docker/cdaringe/freshawair) available, the only supported mechanism for building is following:
 
 - install [rad](https://github.com/cdaringe/rad#install)
 - `rad -l info uibuild`
 - `docker-compose build --parallel`
 - `docker-compose up`
+
+See [rad.ts](./rad.ts) or run `rad --list` for various actions.
