@@ -2,6 +2,7 @@ import type { Task, Tasks } from "./.rad/common.ts";
 import { tasks as dbTasks } from "./.rad/db.ts";
 import { tasks as opamTasks } from "./.rad/opam.ts";
 import { tasks as uiTasks } from "./.rad/ui.ts";
+import { deploy } from "./.rad/deploy.ts";
 import { format } from "./.rad/format.ts";
 
 const duneExec = "opam exec -- dune exec";
@@ -18,4 +19,5 @@ export const tasks: Tasks = {
   ...opamTasks,
   ...dbTasks,
   ...uiTasks,
+  deploy,
 };
