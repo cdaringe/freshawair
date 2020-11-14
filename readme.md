@@ -1,7 +1,9 @@
 # freshawair
 
-Store your Awair data locally.
-Access your Awair data from a user hosted web-app.
+Host and view your Awair data locally.
+
+- store your Awair data in your own db
+- access your Awair data from a self hosted web-app.
 
 <img src="./img/preview.png" width="200" />
 
