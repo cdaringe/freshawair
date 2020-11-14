@@ -1,9 +1,10 @@
-node_modules
-esy.lock
-.git
+_build
+_esy
 .ci
+.freshdb
+.git
 .github
 .vscode
-_esy
-_build
-.freshdb
+esy.lock
+node_modules
+public

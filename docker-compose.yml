@@ -16,7 +16,7 @@ services:
         max-size: "200k"
         max-file: "10"
     volumes:
-      - ./public:/public
+      - ./public:/app/public
     build:
       context: .
       dockerfile: ./Dockerfile.server
