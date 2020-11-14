@@ -6,7 +6,6 @@ export const deploy: Task = {
   dependsOn: [ui.uibuild],
   async fn({ sh, logger }) {
     const ip = Deno.env.get("NAS_IP");
-    const user = Deno.env.get("USER");
     if (!ip) throw new Error(`missing NAS_IP env var`);
     const destDir = "/volume1/docker/freshawair";
     await Deno.remove("public", { recursive: true }).catch(() => {});
