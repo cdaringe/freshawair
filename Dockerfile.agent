@@ -24,6 +24,7 @@ RUN eval $(opam env) && opam exec -- dune build --release bin/Agent.exe && \
   ./_build/default/bin/Agent.exe -help
 
 FROM alpine:3.12
+WORKDIR /app
 COPY --from=builder /app/_build/default/bin/Agent.exe .
 RUN apk upgrade --update && \
   apk add -U postgresql-client gmp-dev tzdata && \

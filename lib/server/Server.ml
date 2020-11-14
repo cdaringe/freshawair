@@ -48,10 +48,35 @@ let create_handle_post_air_stats conn (req : Rock.Request.t) =
           Lwt.return @@ Response.create ~code:`Bad_gateway ~body:`Empty () )
   | Error _ -> Lwt.return @@ Response.create ~code:`Bad_gateway ~body:`Empty ()
 
+let index_middleware =
+  let filter handler (req : Rock.Request.t) =
+    let is_root_path = String.equal req.request.resource "/" in
+    Log.info @@ Printf.sprintf "is_root_path %b" is_root_path;
+    if is_root_path then
+      let headers = Cohttp.Header.(of_list [ ("Location", "/index.html") ]) in
+      Lwt.return @@ Response.create ~code:`Found ~headers ()
+    else handler req
+  in
+  Rock.Middleware.create ~filter ~name:"index_middleware"
+
 let create_middleware () =
   Opium.Middleware.static ~local_path:"./public/" ~uri_prefix:"/" ()
 
+let logging_middleware : Opium_kernel.Rock.Middleware.t =
+  let filter handler (req : Rock.Request.t) =
+    Log.debug @@ Printf.sprintf "start %s" req.request.resource;
+    handler req >>= fun x ->
+    Log.debug @@ Printf.sprintf "end %s" req.request.resource;
+    Lwt.return x
+  in
+  Rock.Middleware.create ~filter ~name:"logging"
+
+let noop = Rock.Middleware.create ~filter:(fun h r -> h r) ~name:"noop"
+
 let start ~config =
+  let is_logging_mw =
+    Sys.getenv_opt "LOG_REQUESTS" |> function Some _ -> true | None -> false
+  in
   let middleware = create_middleware () in
   let db_ready =
     Lwt.catch
@@ -64,7 +89,10 @@ let start ~config =
   Log.info
   @@ Core.sprintf "Server started on port %s"
   @@ string_of_int config.port;
-  App.empty |> App.middleware middleware |> App.port config.port
+  App.empty
+  |> App.middleware index_middleware
+  |> (App.middleware @@ if is_logging_mw then logging_middleware else noop)
+  |> App.middleware middleware |> App.port config.port
   |> App.options "/air/stats" handle_options_air_stats
   |> App.get "/air/stats" (create_handle_get_air_stats conn)
   |> App.post "/air/stats" (create_handle_post_air_stats conn)

@@ -24,6 +24,7 @@ RUN eval $(opam env) && opam exec -- dune build --release bin/Server.exe && \
   ./_build/default/bin/Server.exe -help
 
 FROM alpine:3.12
+WORKDIR /app
 COPY --from=builder /app/_build/default/bin/Server.exe .
 RUN apk upgrade --update && \
   apk add -U postgresql-client gmp-dev tzdata && \
