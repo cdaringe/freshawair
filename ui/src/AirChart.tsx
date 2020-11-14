@@ -33,20 +33,20 @@ const defaultColumns = [
 ].filter((n) => !n.match(/(baseline|timestamp|raw)/));
 
 type StatRow = [
-  number /* abs_humid */,
-  number /* co2 */,
-  number /* co2_est */,
-  number /* dew_point */,
-  number /* humid */,
-  number /* pm10_est */,
-  number /* pm25 */,
-  number /* score */,
-  number /* temp */,
-  string /* timestamp */,
-  number /* voc */,
-  number /* voc_baseline */,
-  number /* voc_ethanol_raw */,
-  number /* voc_h2_raw */
+  number, /* abs_humid */
+  number, /* co2 */
+  number, /* co2_est */
+  number, /* dew_point */
+  number, /* humid */
+  number, /* pm10_est */
+  number, /* pm25 */
+  number, /* score */
+  number, /* temp */
+  string, /* timestamp */
+  number, /* voc */
+  number, /* voc_baseline */
+  number, /* voc_ethanol_raw */
+  number, /* voc_h2_raw */
 ];
 
 type Series = { name: string; data: any[] };
@@ -65,7 +65,10 @@ const asSeries = (data: StatRow[], colEntries: [string, boolean][]): Series[] =>
 
 export const AirChart: React.FC<Props> = ({ binningValue }) => {
   const [colState, setColumns] = React.useState<Record<string, boolean>>(
-    defaultColumns.reduce((acc, c) => ({ ...acc, [c]: !!c.match(/score/) }), {})
+    defaultColumns.reduce(
+      (acc, c) => ({ ...acc, [c]: !!c.match(/score/) }),
+      {},
+    ),
   );
   const onColumnToggled = (event: any) => {
     setColumns({ ...colState, [event.target.name]: event.target.checked });
@@ -104,14 +107,12 @@ export const AirChart: React.FC<Props> = ({ binningValue }) => {
           {colEntries.map(([colName, isActivated]) => (
             <FormControlLabel
               key={colName}
-              control={
-                <Switch
-                  size="small"
-                  checked={isActivated}
-                  onChange={onColumnToggled}
-                  name={colName}
-                />
-              }
+              control={<Switch
+                size="small"
+                checked={isActivated}
+                onChange={onColumnToggled}
+                name={colName}
+              />}
               label={colName}
             />
           ))}

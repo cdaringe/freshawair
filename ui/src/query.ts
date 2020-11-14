@@ -8,6 +8,6 @@ export const getQuery: () => Record<string, string> = () => {
   const parts = toParse[1]!.split("&");
   return parts.reduce(
     (acc, kv) => ({ ...acc, ...asObj(kv) }),
-    {} as Record<string, string>
+    {} as Record<string, string>,
   );
 };
