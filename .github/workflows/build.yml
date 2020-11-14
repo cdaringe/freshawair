@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [alpine] #, macos-latest, windows-latest]
+        os: [ubuntu-latest] #, macos-latest, windows-latest]
         ocaml-version:
           - 4.10.1
     steps:
@@ -17,6 +17,6 @@ jobs:
         uses: avsm/setup-ocaml@v1
         with:
           ocaml-version: ${{ matrix.ocaml-version }}
-      - run: opam switch import opam.deps.export
+      - run: bash opam.dev.deps.sh
       - run: opam exec -- dune build
       - run: opam exec -- dune runtest
