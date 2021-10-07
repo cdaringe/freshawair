@@ -28,19 +28,18 @@ let poll_awair ~config =
           "failed to unpack sensor data. has the schema changed?"
   in
   let rec run f =
-    match_with f ()
+    try_with f ()
       {
-        retc = (function _ -> ());
-        exnc = (function e -> raise e);
         effc =
           (fun (type a) (e : a eff) ->
-            let sometinue v =
-              Some (fun (k : (a, _) continuation) -> continue k v)
+            let sometinue fn =
+              Some (fun (k : (a, _) continuation) -> continue k (fn ()))
             in
             match e with
-            | HttpGet url -> Http.get url |> sometinue
-            | HttpReadStringBody body -> Http.read_body_str body |> sometinue
-            | HttpPost post -> Http.post post |> sometinue
+            | HttpGet url -> sometinue @@ fun _ -> Http.get url
+            | HttpReadStringBody body ->
+                sometinue @@ fun _ -> Http.read_body_str body
+            | HttpPost post -> sometinue @@ fun _ -> Http.post post
             | _ -> None);
       }
   in
