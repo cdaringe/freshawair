@@ -11,5 +11,5 @@ let from_json sensor_str =
 
 let read_local_sensors ~url =
   perform @@ HttpGet url |> fun (_res, body) ->
-  perform (HttpReadStringBody body) |> from_json
+  perform @@ HttpReadStringBody body |> from_json
 (* Freshcommon.Log.debug body_str; *)
