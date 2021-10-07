@@ -13,13 +13,8 @@ type config = {
 let upload_stat ~url ~token ~(stat : Freshmodel.local_sensors_stat) =
   let open Freshcommon.HandlerCommon in
   let body = Freshmodel.stat_to_json stat in
-  let res, body =
-    perform
-      (HttpPost { body; headers = [ json_headers; auth_header token ]; url })
-  in
-  Freshcommon.Log.debug @@ Cohttp.Code.string_of_status
-  @@ Cohttp_lwt.Response.status res;
-  (res, body)
+  perform
+    (HttpPost { body; headers = [ json_headers; auth_header token ]; url })
 
 let on_sensor_read ~config stat =
   upload_stat ~url:config.data_store_endpoint ~token:config.auth_token ~stat
