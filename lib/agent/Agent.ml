@@ -26,18 +26,11 @@ let on_sensor_read ~config stat =
 
 let poll_awair ~config =
   let etl () =
-    (* caught! *)
-    (* let () = raise (Http.E "tacos") in *)
-    let () =
-      Awair.read_local_sensors ~url:config.awair_endpoint |> function
-      | Ok stat ->
-          let _ = on_sensor_read ~config stat in
-          ()
-      | Error e ->
-          Freshcommon.Log.error
-            "failed to unpack sensor data. has the schema changed?"
-    in
-    ""
+    Awair.read_local_sensors ~url:config.awair_endpoint |> function
+    | Ok stat -> on_sensor_read ~config stat |> fun _ -> ()
+    | Error e ->
+        Freshcommon.Log.error
+          "failed to unpack sensor data. has the schema changed?"
   in
   let rec run f =
     match_with f ()
