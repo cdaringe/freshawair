@@ -2,6 +2,7 @@ type local_sensors_stat = {
   abs_humid : float;
   co2 : float;
   co2_est : float;
+  co2_est_baseline : float;
   dew_point : float;
   humid : float;
   pm10_est : float;
@@ -17,12 +18,12 @@ type local_sensors_stat = {
 [@@deriving yojson { exn = true }]
 
 (* legacy code from when shipping iso timestamps down as string, vs
-epoch ms offsets
+   epoch ms offsets
 *)
 (* let with_serialized_sensor_date i x =
-  match i with 9 -> "\"" ^ x ^ "\"" | _ -> x
+     match i with 9 -> "\"" ^ x ^ "\"" | _ -> x
 
-let to_serialized_parts = List.mapi with_serialized_sensor_date *)
+   let to_serialized_parts = List.mapi with_serialized_sensor_date *)
 
 let stat_to_json (stat : local_sensors_stat) =
   let ss = local_sensors_stat_to_yojson stat in

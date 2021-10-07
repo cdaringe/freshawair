@@ -1,9 +1,5 @@
-let logger s =
-  print_string @@ s ^ "\n";
-  Core.Out_channel.flush stdout
+let logger = print_endline
 
-let error s =
-  Printf.eprintf "%s" s;
-  Core.Out_channel.flush stderr
+let error = prerr_endline
 
 let log = logger

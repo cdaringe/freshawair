@@ -1,1 +1,0 @@
-exception InitError of string

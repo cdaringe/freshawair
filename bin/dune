@@ -1,15 +1,7 @@
 (executable
- (name Server)
- (public_name Server)
- (modules Server)
- (preprocess
-  (pps ppx_jane))
- (libraries lwt freshserver))
-
-(executable
  (name Agent)
  (public_name Agent)
  (modules Agent)
  (preprocess
   (pps ppx_jane))
- (libraries lwt freshagent))
+ (libraries lwt cmdliner freshagent))

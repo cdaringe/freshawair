@@ -12,8 +12,7 @@ function Copyright() {
       {"Copyright © "}
       <Link color="inherit" href="https://material-ui.com/">
         Your Website
-      </Link>
-      {" "}
+      </Link>{" "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
@@ -46,11 +45,13 @@ export const Layout: React.FC = ({ children }) => {
       <CssBaseline />
       <Container component="main" className={`${classes.main}`} maxWidth="sm">
         {children}
-        {/* <Typography variant="h5" component="h2" gutterBottom>
+        {
+          /* <Typography variant="h5" component="h2" gutterBottom>
           {"Pin a footer to the bottom of the viewport."}
           {"The footer will move as the main element of the page grows."}
         </Typography>
-        <Typography variant="body1">Sticky footer placeholder.</Typography> */}
+        <Typography variant="body1">Sticky footer placeholder.</Typography> */
+        }
       </Container>
       <footer className={classes.footer}>
         <Container maxWidth="sm">

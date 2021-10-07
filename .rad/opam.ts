@@ -1,17 +1,20 @@
 import type { Task, Tasks } from "./common.ts";
 
 const opamSetup: Task = {
-  async fn({ sh }) {
+  async fn({ logger, sh }) {
     try {
-      await sh(`opam switch freshawair`);
+      await sh(`opam switch 4.12.0+domains`);
     } catch (err) {
-      await sh(`opam switch create freshawair 4.10.1`);
+      logger.error(err);
+      throw new Error(
+        "need to https://github.com/ocaml-multicore/multicore-opam#install-multicore-ocaml?",
+      );
     }
   },
 };
 const opamInstall: Task = {
   dependsOn: [opamSetup],
-  fn: async ({ sh }) => sh(`bash ./opam.lame.deps.sh`),
+  fn: async ({ sh }) => sh(`bash ./opam.dev.deps.sh`),
 };
 const opamExport: Task = `opam switch export freshawair.opam.deps`;
 const opamImport: Task = `opam switch import freshawair.opam.deps`;

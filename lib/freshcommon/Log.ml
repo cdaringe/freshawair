@@ -21,12 +21,12 @@ let active_log_format =
 (* https://en.wikipedia.org/wiki/Syslog#Severity_level *)
 let log ~(level : int) ?(transport = Console.log) (message : string) =
   log_message_to_yojson
-    { timestamp = Core.Time.to_string @@ Core.Time.now (); message; level }
+    { timestamp = ODate.Unix.(Printer.to_iso @@ now ()); message; level }
   |> Yojson.Safe.to_string |> transport
 
 let error = log ~level:3 ~transport:Console.error
 
-let exn e = log ~level:3 ~transport:Console.error @@ Core.Exn.to_string e
+let exn e = log ~level:3 ~transport:Console.error @@ Printexc.to_string e
 
 let warn = log ~level:4
 

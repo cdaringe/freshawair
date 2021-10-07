@@ -8,13 +8,11 @@ import { format } from "./.rad/format.ts";
 const duneExec = "opam exec -- dune exec";
 
 const startAgent: Task =
-  `${duneExec} bin/Agent.exe -- -data-store-endpoint http://localhost:8000/air/stats -poll-duration 10 -auth-token abc`;
-const startServer: Task = `${duneExec} bin/Server.exe -- -auth-token abc`;
+  `${duneExec} bin/Agent.exe -- --data-store-endpoint http://localhost:8000/air/stats --poll-duration 10 --auth-token abc`;
 
 // run `rad --list` to see all tasks
 export const tasks: Tasks = {
   ...{ startAgent, sa: startAgent },
-  ...{ startServer, ss: startServer },
   ...{ format, f: format },
   ...opamTasks,
   ...dbTasks,

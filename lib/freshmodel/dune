@@ -5,4 +5,4 @@
  ;  (public_name freshmodel)
  (preprocess
   (pps ppx_deriving_yojson lwt_ppx))
- (libraries opium core lwt ppx_deriving_yojson.runtime yojson))
+ (libraries ppx_deriving_yojson.runtime yojson))

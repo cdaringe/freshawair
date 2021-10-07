@@ -1,4 +1,7 @@
 open Freshcommon
+open Obj.Effect_handlers
+open Obj.Effect_handlers.Deep
+open Effects
 
 type config = {
   auth_token : string;
@@ -7,49 +10,62 @@ type config = {
   awair_endpoint : string;
 }
 
-let upload_stat ~uri ~token (stat : Freshmodel.local_sensors_stat) =
-  let body = `String (Freshmodel.stat_to_json stat) in
+let upload_stat ~url ~token ~(stat : Freshmodel.local_sensors_stat) =
   let open Freshcommon.HandlerCommon in
-  let open Cohttp_lwt_unix in
-  let open Cohttp_lwt in
-  let open Lwt in
-  Client.post ~body
-    ~headers:(Cohttp.Header.of_list [ json_headers; auth_header token ])
-    uri
-  >|= fun (res, body) ->
-  Freshcommon.Log.debug @@ Cohttp.Code.string_of_status @@ Response.status res;
+  let body = Freshmodel.stat_to_json stat in
+  let res, body =
+    perform
+      (HttpPost { body; headers = [ json_headers; auth_header token ]; url })
+  in
+  Freshcommon.Log.debug @@ Cohttp.Code.string_of_status
+  @@ Cohttp_lwt.Response.status res;
   (res, body)
 
-let on_sensor_read ~config =
-  let open Lwt in
-  let partial_upload stat () =
-    upload_stat
-      ~uri:(Uri.of_string config.data_store_endpoint)
-      ~token:config.auth_token stat
-    >>= fun _ ->
-    (* Console.log @@ Core.Time.to_string @@ Core.Time.now (); *)
-    Lwt.return_unit
-  in
-  function
-  | Ok stat ->
-      Lwt.catch (partial_upload stat) (fun e ->
-          Log.exn e;
-          Lwt.return_unit)
-  | Error e ->
-      Log.error "failed to read sensor :/";
-      Log.error e;
-      Lwt.return ()
+let on_sensor_read ~config stat =
+  upload_stat ~url:config.data_store_endpoint ~token:config.auth_token ~stat
 
 let poll_awair ~config =
-  let open Lwt in
-  let on_read_result = on_sensor_read ~config in
-  Awair.read_local_sensors ~url:config.awair_endpoint >>= on_read_result
+  let etl () =
+    (* caught! *)
+    (* let () = raise (Http.E "tacos") in *)
+    let () =
+      Awair.read_local_sensors ~url:config.awair_endpoint |> function
+      | Ok stat ->
+          let _ = on_sensor_read ~config stat in
+          ()
+      | Error e ->
+          Freshcommon.Log.error
+            "failed to unpack sensor data. has the schema changed?"
+    in
+    ""
+  in
+  let rec run f =
+    match_with f ()
+      {
+        retc = (function _ -> ());
+        exnc = (function e -> raise e);
+        effc =
+          (fun (type a) (e : a eff) ->
+            let sometinue v =
+              Some (fun (k : (a, _) continuation) -> continue k v)
+            in
+            match e with
+            | HttpGet url -> Http.get url |> sometinue
+            | HttpReadStringBody body -> Http.read_body_str body |> sometinue
+            | HttpPost post -> Http.post post |> sometinue
+            | _ -> None);
+      }
+  in
+  run etl
 
 let rec start ?(init = false) ~(config : config) () : unit =
-  let ontick () =
-    (* Console.log @@ Core.Time.to_string @@ Core.Time.now (); *)
-    ignore
-    @@ Lwt.on_termination (poll_awair ~config) (fun _ -> start ~config ())
-  in
-  if init then ontick ()
-  else Lwt_timeout.start @@ Lwt_timeout.create config.poll_duration_s ontick
+  let { poll_duration_s } = config in
+  while true do
+    let () =
+      try poll_awair ~config with
+      | Http.E e -> Freshcommon.Log.error ("http error: " ^ e)
+      | e -> failwith @@ Printexc.to_string e
+    in
+    Unix.sleep poll_duration_s
+  done;
+  ()

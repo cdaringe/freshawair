@@ -1,48 +1,39 @@
-let value_default_cb ~default = function Some x -> x | None -> default ()
+open Cmdliner
 
-exception Missing_auth_token of string
+let data_store_endpoint =
+  let doc = "data store endpoint" in
+  Arg.(
+    value
+    & opt string "https://192.168.0.36/air/stats"
+    & info [ "d"; "data-store-endpoint" ] ~doc)
+
+let poll_duration_s =
+  let doc = "poll duration (seconds)" in
+  Arg.(value & opt int 60 & info [ "p"; "poll-duration" ] ~doc)
+
+let awair_endpoint =
+  let doc = "awair endpoint, default http://192.168.0.100/air-data/latest" in
+  Arg.(
+    value
+    & opt string "http://192.168.0.100/air-data/latest"
+    & info [ "a"; "awair-endpoint" ] ~doc)
+
+let auth_token =
+  let doc = "auth token for accepting i/o for awair data" in
+  Arg.(required & opt (some string) None & info [ "t"; "auth-token" ] ~doc)
+
+let run_agent auth_token awair_endpoint data_store_endpoint poll_duration_s =
+  Freshcommon.Log.info "starting";
+  Freshagent.Agent.start ~init:true
+    ~config:{ auth_token; data_store_endpoint; awair_endpoint; poll_duration_s }
+    ()
 
 let cmd =
-  let open Core.Command in
-  basic ~summary:"freshawair - self hosted awair ETL"
-    ~readme:(fun () -> "More detailed information")
-    Let_syntax.(
-      let%map_open idata_store_endpoint =
-        flag "data-store-endpoint" (optional string) ~doc:"data store endpoint"
-      and poll_duration =
-        flag "poll-duration" (optional int)
-          ~doc:
-            "poll_duration seconds between awair data capture and uploads, \
-             default 60"
-      and awair_endpoint =
-        flag "awair-endpoint" (optional string)
-          ~doc:"awair endpoint, default http://192.168.0.100/air-data/latest"
-      and uauth_token =
-        flag "auth-token" (optional string)
-          ~doc:"auth token for accepting i/o for awair data"
-      in
-      fun () ->
-        let open Option in
-        let auth_token =
-          value_default_cb uauth_token ~default:(fun _ ->
-              Sys.getenv_opt "AUTH_TOKEN" |> function
-              | Some x -> x
-              | _ -> raise (Missing_auth_token "missing auth toke"))
-        in
-        Freshagent.Agent.start ~init:true
-          ~config:
-            {
-              auth_token;
-              data_store_endpoint =
-                value idata_store_endpoint
-                  ~default:"https://192.168.0.36/air/stats";
-              awair_endpoint =
-                value awair_endpoint
-                  ~default:"http://192.168.0.100/air-data/latest";
-              poll_duration_s = value poll_duration ~default:60;
-            }
-          ();
-        let never_resolves, _ = Lwt.wait () in
-        Lwt_main.run never_resolves)
+  let open Cmdliner in
+  let doc = "freshawair - agent" in
+  ( Term.(
+      const run_agent $ auth_token $ awair_endpoint $ data_store_endpoint
+      $ poll_duration_s),
+    Term.info "agent" ~version:"v2.0.0" ~doc ~exits:Term.default_exits )
 
-let () = Core.Command.run ~version:"0.0.1" cmd
+let () = Term.(exit @@ eval cmd)

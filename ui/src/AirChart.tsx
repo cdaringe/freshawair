@@ -107,12 +107,14 @@ export const AirChart: React.FC<Props> = ({ binningValue }) => {
           {colEntries.map(([colName, isActivated]) => (
             <FormControlLabel
               key={colName}
-              control={<Switch
-                size="small"
-                checked={isActivated}
-                onChange={onColumnToggled}
-                name={colName}
-              />}
+              control={(
+                <Switch
+                  size="small"
+                  checked={isActivated}
+                  onChange={onColumnToggled}
+                  name={colName}
+                />
+              )}
               label={colName}
             />
           ))}
