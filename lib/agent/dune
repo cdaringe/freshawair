@@ -5,4 +5,4 @@
  ;  (public_name fresh-reason)
  ;  (preprocess
  ;   (pps ppx_deriving_yojson lwt_ppx))
- (libraries freshmodel freshcommon))
+ (libraries freshmodel freshcommon ezpostgresql))

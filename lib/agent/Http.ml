@@ -12,7 +12,9 @@ let get url =
 
 let read_body_str body =
   let f () = Cohttp_lwt.Body.to_string body in
-  run f
+  let body_str = run f in
+  Lwt_main.run @@ Cohttp_lwt.Body.drain_body body;
+  body_str
 
 let post ({ body; headers; url } : Effects.post) =
   let f () =

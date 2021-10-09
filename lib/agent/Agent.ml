@@ -2,13 +2,7 @@ open Freshcommon
 open Obj.Effect_handlers
 open Obj.Effect_handlers.Deep
 open Effects
-
-type config = {
-  auth_token : string;
-  data_store_endpoint : string;
-  poll_duration_s : int;
-  awair_endpoint : string;
-}
+open Config
 
 let upload_stat ~url ~token ~(stat : Freshmodel.local_sensors_stat) =
   let open Freshcommon.HandlerCommon in
@@ -17,7 +11,9 @@ let upload_stat ~url ~token ~(stat : Freshmodel.local_sensors_stat) =
     (HttpPost { body; headers = [ json_headers; auth_header token ]; url })
 
 let on_sensor_read ~config stat =
-  upload_stat ~url:config.data_store_endpoint ~token:config.auth_token ~stat
+  (* upload_stat ~url:config.data_store_endpoint ~token:config.auth_token ~stat *)
+  let conn = perform (DbConnect config) in
+  Awair.save_local_sensor ~conn stat
 
 let poll_awair ~config =
   let etl () =
@@ -32,26 +28,31 @@ let poll_awair ~config =
       {
         effc =
           (fun (type a) (e : a eff) ->
-            let sometinue fn =
+            let cont fn =
               Some (fun (k : (a, _) continuation) -> continue k (fn ()))
             in
             match e with
-            | HttpGet url -> sometinue @@ fun _ -> Http.get url
+            | DbConnect config -> cont @@ fun _ -> Db.get_connection config
+            | DbInsert { conn; query; params } ->
+                cont @@ fun _ -> Db.insert ~conn ~query ~params
+            | HttpGet url -> cont @@ fun _ -> Http.get url
             | HttpReadStringBody body ->
-                sometinue @@ fun _ -> Http.read_body_str body
-            | HttpPost post -> sometinue @@ fun _ -> Http.post post
+                cont @@ fun _ -> Http.read_body_str body
+            | HttpPost post -> cont @@ fun _ -> Http.post post
             | _ -> None);
       }
   in
   run etl
 
-let rec start ?(init = false) ~(config : config) () : unit =
+let rec start ?(init = false) ~(config : Config.config) () : unit =
+  let open Freshcommon.Log in
+  info "agent started";
   let { poll_duration_s } = config in
   while true do
     let () =
       try poll_awair ~config with
-      | Http.E e -> Freshcommon.Log.error ("http error: " ^ e)
-      | e -> failwith @@ Printexc.to_string e
+      | Http.E e -> error ("http error: " ^ e)
+      | e -> error @@ Printexc.to_string e;
     in
     Unix.sleep poll_duration_s
   done;

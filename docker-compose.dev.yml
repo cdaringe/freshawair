@@ -3,3 +3,6 @@ services:
   freshdb:
     ports:
       - "5432:5432"
+  grafana:
+    ports:
+      - "3000:3000"

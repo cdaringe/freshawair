@@ -6,7 +6,7 @@ opam pin add -yn git+https://github.com/cdaringe/ezpostgresql#c8b6af1
 # opam pin add -yn git+https://github.com/ocaml-multicore/eio#5245ca5
 #   "eio" \
 
-opam install -yn \
+opam install -y \
   "ezpostgresql" \
   "opium" \
   "cmdliner" \
@@ -18,4 +18,5 @@ opam install -yn \
   "tls>=0.12.0" \
   "odate" \
   "uri" \
-  "yojson"
+  "yojson" \
+  "ppx_jane"

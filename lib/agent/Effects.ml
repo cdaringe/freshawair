@@ -9,3 +9,10 @@ type _ eff +=
   | HttpReadStringBody : Cohttp_lwt.Body.t -> string eff
   | HttpGet : string -> reply eff
   | HttpPost : post -> reply eff
+  | DbConnect : Config.config -> Ezpostgresql.connection eff
+  | DbInsert : {
+      conn : Ezpostgresql.connection;
+      query : string;
+      params : string array;
+    }
+      -> unit eff
