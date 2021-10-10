@@ -22,8 +22,8 @@ export const deploy: Task = {
       `cd ${destDir}`,
       "/usr/local/bin/docker-compose down",
       "/usr/local/bin/docker-compose build",
-      "mkdir -p .freshdb",
-      "/usr/local/bin/docker-compose up -d --force-recreate",
+      "mkdir -p ../.freshdb", // put the db in a parent dir for write protection :|
+      "/usr/local/bin/docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate",
     ].join(" && ");
     const remoteCmd = `echo '${cmd}' | ssh ${sshUser}@${ip}`;
     logger.info(remoteCmd);
