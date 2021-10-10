@@ -28,7 +28,7 @@ COPY --chown=opam:opam . .
 RUN eval $(opam env) && opam exec -- dune build --release bin/Agent.exe && \
   ./_build/default/bin/Agent.exe --help && \
   mv ./_build/default/bin/Agent.exe ./
-CMD [ "Agent.exe", "--poll-duration=60" ]
+CMD [ "./Agent.exe", "--poll-duration=60" ]
 # FROM alpine:3.14
 # WORKDIR /app
 

@@ -1,7 +1,6 @@
 import type { Task, Tasks } from "./.rad/common.ts";
 import { tasks as dbTasks } from "./.rad/db.ts";
 import { tasks as opamTasks } from "./.rad/opam.ts";
-import { tasks as uiTasks } from "./.rad/ui.ts";
 import { deploy } from "./.rad/deploy.ts";
 import { format } from "./.rad/format.ts";
 
@@ -17,6 +16,5 @@ export const tasks: Tasks = {
   ...{ format, f: format },
   ...opamTasks,
   ...dbTasks,
-  ...uiTasks,
   deploy,
 };

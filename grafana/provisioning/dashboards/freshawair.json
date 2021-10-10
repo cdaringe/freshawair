@@ -1,22 +1,6 @@
 {
   "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "Postgres",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
-        "type": "dashboard"
-      }
-    ]
+    "list": []
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
@@ -28,6 +12,7 @@
   "panels": [
     {
       "datasource": "Postgres",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -134,7 +119,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  score,\n  co2\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\")\nORDER BY 1",
+          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  score,\n  co2\nFROM sensor_stats \nWHERE\n  $__timeFilter(\"timestamp\")\nORDER BY 1",
           "refId": "Score",
           "select": [
             [
@@ -391,12 +376,12 @@
     "list": []
   },
   "time": {
-    "from": "2021-10-09T06:06:40.595Z",
-    "to": "2021-10-09T06:29:59.269Z"
+    "from": "now-5m",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "freshawair",
   "uid": "d46HuYvnz",
-  "version": 4
+  "version": 9
 }

@@ -1,34 +1,18 @@
 version: "3.6"
 services:
-  # freshserver:
-  #   image: cdaringe/freshawair:server
-  #   command: ./Server.exe -port 8000 -auth-token abc -db-host freshdb -db-port 5432
-  #   ports:
-  #     - 8000:8000
-  #   networks:
-  #     - fresh
-  #   depends_on:
-  #     - freshdb
-  #   restart: "on-failure"
-  #   logging:
-  #     driver: json-file
-  #     options:
-  #       max-size: "200k"
-  #       max-file: "10"
-  #   volumes:
-  #     - ./public:/app/public
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile.server
   grafana:
     image: grafana/grafana:8.2.0
     ports:
-      - 3000
+      - 3000:3000
     user: "472"
     networks:
       - fresh
-    env_file:
-      - ./grafana/.env
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ORG_ROLE=Editor
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      # - GF_AUTH_ANONYMOUS_ORG_NAME=fresh
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
     deploy:
