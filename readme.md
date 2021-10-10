@@ -2,7 +2,7 @@
 
 <!-- markdownlint-disable MD033 -->
 
-Host and view your Awair data locally.
+Host and view your [Awair data](https://www.getawair.com/) locally.
 
 - store your Awair data in your own db
 - access your Awair data from a self hosted web-app (grafana).
@@ -11,7 +11,7 @@ Host and view your Awair data locally.
 
 ## description
 
-`freshawair` is four macro components
+`freshawair` is three macro components
 
 - `agent` - captures data from your awair and forwards it to your `server`
 - `db` - [timescale db](https://www.timescale.com/) instance
@@ -24,6 +24,6 @@ At the current time, even though there are [docker images](https://hub.docker.co
 - install [rad](https://github.com/cdaringe/rad#install)
 - `docker-compose build`
 - `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up`
-- visit grafana@[localhost:3000](https://localhost:3000) and use the prebuilt dashboards
+- visit grafana@[localhost:3000](https://localhost:3000) and select the prebuilt dashboard
 
 See [rad.ts](./rad.ts) or run `rad --list` for various actions.
