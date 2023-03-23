@@ -1,6 +1,0 @@
-(executable
- (name Agent)
- (modules Agent)
- (preprocess
-  (pps ppx_jane))
- (libraries lwt cmdliner freshagent))

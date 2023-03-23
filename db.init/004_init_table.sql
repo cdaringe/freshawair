@@ -1,4 +1,5 @@
-create table fresh.public.sensor_stats(
+create table if not exists fresh.public.sensor_stats(
+  sensor_index smallint,
   abs_humid float,
   co2 float,
   co2_est float,

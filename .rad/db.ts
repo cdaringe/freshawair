@@ -2,7 +2,7 @@ import type { Tasks } from "./common.ts";
 import addMinutes from "https://deno.land/x/date_fns@v2.15.0/addMinutes/index.js";
 
 // db
-const containerName = "freshawair_freshdb_1";
+const containerName = "freshawair-freshdb-1";
 const dbname = "fresh";
 const dbuser = "fresh";
 const composeDevArgs = "-f docker-compose.yml -f docker-compose.dev.yml";
