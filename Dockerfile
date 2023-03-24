@@ -1,3 +1,4 @@
+# FROM --platform=$BUILDPLATFORM rust as base
 FROM rust as base
 RUN apt-get install libssl-dev openssl
 WORKDIR /app
@@ -5,6 +6,7 @@ WORKDIR /app
 FROM base as chef
 RUN cargo install cargo-chef
 
+# FROM --platform=$BUILDPLATFORM chef AS planner
 FROM chef AS planner
 COPY . .
 RUN cargo chef prepare --recipe-path recipe.json

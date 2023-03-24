@@ -26,7 +26,7 @@ services:
       - fresh
     init: true
     command: |
-      ./agent --db-host=freshdb --awair-endpoint=http://192.168.3.2/air-data/latest --awair-endpoint=http://192.168.3.3/air-data/latest
+      --db-host=freshdb --awair-endpoint=http://192.168.3.2/air-data/latest --awair-endpoint=http://192.168.3.3/air-data/latest
     restart: "on-failure"
     logging:
       driver: json-file
@@ -35,7 +35,7 @@ services:
         max-file: "10"
     build:
       context: .
-      dockerfile: ./Dockerfile.agent
+      dockerfile: ./Dockerfile
     deploy:
       restart_policy:
         condition: on-failure

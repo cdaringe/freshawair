@@ -4,6 +4,7 @@ import { deploy } from "./.rad/deploy.ts";
 import { format } from "./.rad/format.ts";
 
 const build = `docker build -t cdaringe/freshawair .`;
+// const build = `docker buildx build --platform linux/amd64 -t cdaringe/freshawair .`;
 
 const startAgent: Task = [
   "cargo run -p agent --",

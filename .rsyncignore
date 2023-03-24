@@ -17,8 +17,9 @@ agenda.md
 db
 docker-compose.dev.yml
 esy.lock
+img
 node_modules/
 opam.dev.deps.sh
 rad.ts
-ui
 target
+ui
