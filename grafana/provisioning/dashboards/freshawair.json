@@ -1,6 +1,22 @@
 {
   "annotations": {
-    "list": []
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
@@ -101,6 +117,205 @@
         "x": 0,
         "y": 0
       },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": ["mean"],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [
+            {
+              "params": ["$__interval", "none"],
+              "type": "time"
+            }
+          ],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  $__timeGroupAlias(\"timestamp\",$__interval),\n  avg(score) AS \"Grant\"\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '0'\nGROUP BY 1\nORDER BY 1",
+          "refId": "Grant",
+          "select": [
+            [
+              {
+                "params": ["score"],
+                "type": "column"
+              },
+              {
+                "params": ["avg"],
+                "type": "aggregate"
+              },
+              {
+                "params": ["Grant"],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "sensor_stats",
+          "timeColumn": "\"timestamp\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            },
+            {
+              "datatype": "int2",
+              "name": "",
+              "params": ["sensor_index", "=", "'0'"],
+              "type": "expression"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [
+            {
+              "params": ["$__interval", "none"],
+              "type": "time"
+            }
+          ],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  $__timeGroupAlias(\"timestamp\",$__interval),\n  avg(score) AS \"Malcom\"\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '1'\nGROUP BY 1\nORDER BY 1",
+          "refId": "Malcom",
+          "select": [
+            [
+              {
+                "params": ["score"],
+                "type": "column"
+              },
+              {
+                "params": ["avg"],
+                "type": "aggregate"
+              },
+              {
+                "params": ["Malcom"],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "sensor_stats",
+          "timeColumn": "\"timestamp\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            },
+            {
+              "datatype": "int2",
+              "name": "",
+              "params": ["sensor_index", "=", "'1'"],
+              "type": "expression"
+            }
+          ]
+        }
+      ],
+      "title": "AirScore",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Postgres",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "co2"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "none"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "score"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
       "id": 2,
       "options": {
         "legend": {
@@ -115,23 +330,30 @@
       "targets": [
         {
           "format": "time_series",
-          "group": [],
+          "group": [
+            {
+              "params": ["$__interval", "none"],
+              "type": "time"
+            }
+          ],
           "hide": false,
           "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  score,\n  co2\nFROM sensor_stats \nWHERE\n  $__timeFilter(\"timestamp\")\nORDER BY 1",
-          "refId": "Score",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  $__timeGroupAlias(\"timestamp\",$__interval),\n  avg(co2) AS \"Grant\"\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '0'\nGROUP BY 1\nORDER BY 1",
+          "refId": "Grant",
           "select": [
-            [
-              {
-                "params": ["score"],
-                "type": "column"
-              }
-            ],
             [
               {
                 "params": ["co2"],
                 "type": "column"
+              },
+              {
+                "params": ["avg"],
+                "type": "aggregate"
+              },
+              {
+                "params": ["Grant"],
+                "type": "alias"
               }
             ]
           ],
@@ -143,11 +365,63 @@
               "name": "$__timeFilter",
               "params": [],
               "type": "macro"
+            },
+            {
+              "datatype": "int2",
+              "name": "",
+              "params": ["sensor_index", "=", "'0'"],
+              "type": "expression"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [
+            {
+              "params": ["$__interval", "none"],
+              "type": "time"
+            }
+          ],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  $__timeGroupAlias(\"timestamp\",$__interval),\n  avg(co2) AS \"Malcom\"\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '1'\nGROUP BY 1\nORDER BY 1",
+          "refId": "Malcom",
+          "select": [
+            [
+              {
+                "params": ["co2"],
+                "type": "column"
+              },
+              {
+                "params": ["avg"],
+                "type": "aggregate"
+              },
+              {
+                "params": ["Malcom"],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "sensor_stats",
+          "timeColumn": "\"timestamp\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            },
+            {
+              "datatype": "int2",
+              "name": "",
+              "params": ["sensor_index", "=", "'1'"],
+              "type": "expression"
             }
           ]
         }
       ],
-      "title": "Score & CO2",
+      "title": "CO2",
       "type": "timeseries"
     },
     {
@@ -200,13 +474,36 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": ["pm25"],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 9
+        "y": 18
       },
       "id": 4,
       "options": {
@@ -225,8 +522,43 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  avg(pm25) OVER (ORDER BY \"timestamp\" ROWS 3 PRECEDING) AS \"pm25\"\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\")\nORDER BY 1",
-          "refId": "A",
+          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  avg(pm25) OVER (ORDER BY \"timestamp\" ROWS 3 PRECEDING) AS \"pm25\"\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '0'\nORDER BY 1",
+          "refId": "Grant",
+          "select": [
+            [
+              {
+                "params": ["pm25"],
+                "type": "column"
+              },
+              {
+                "params": ["avg", "5"],
+                "type": "moving_window"
+              },
+              {
+                "params": ["pm25"],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "sensor_stats",
+          "timeColumn": "\"timestamp\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  avg(pm25) OVER (ORDER BY \"timestamp\" ROWS 3 PRECEDING) AS \"pm25\"\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '1'\nORDER BY 1",
+          "refId": "Malcom",
           "select": [
             [
               {
@@ -255,7 +587,7 @@
           ]
         }
       ],
-      "title": "PM2 (3m moving avg)",
+      "title": "PM2.5 (3m moving avg)",
       "type": "timeseries"
     },
     {
@@ -318,7 +650,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 9
+        "y": 18
       },
       "id": 6,
       "options": {
@@ -337,8 +669,39 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  ((temp * 1.8) + 32) AS temp\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\")\nORDER BY 1",
-          "refId": "A",
+          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  ((temp * 1.8) + 32) AS Grant\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '0'\nORDER BY 1",
+          "refId": "Grant",
+          "select": [
+            [
+              {
+                "params": ["temp"],
+                "type": "column"
+              },
+              {
+                "params": ["temperature"],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "sensor_stats",
+          "timeColumn": "\"timestamp\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  ((temp * 1.8) + 32) AS Malcom\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '1'\nORDER BY 1",
+          "refId": "Malcom",
           "select": [
             [
               {
@@ -376,12 +739,12 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "freshawair",
   "uid": "d46HuYvnz",
-  "version": 9
+  "version": 3
 }
