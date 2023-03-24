@@ -3,7 +3,7 @@ import { tasks as dbTasks } from "./.rad/db.ts";
 import { deploy } from "./.rad/deploy.ts";
 import { format } from "./.rad/format.ts";
 
-const build = `dune build`;
+const build = `docker build -t cdaringe/freshawair .`;
 
 const startAgent: Task = [
   "cargo run -p agent --",

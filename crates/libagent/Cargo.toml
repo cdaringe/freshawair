@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 # chrono = "0.4.24"
-clap = "4.1.11"
+clap = { version = "4.1.11", features = ["env"] }
 libawair = { path = "../libawair" }
 tokio = { version = "1.26.0", features = ["full"] }
 tokio-postgres = "0.7.7"

@@ -21,11 +21,12 @@ services:
         delay: 300s
         window: 120s
   freshagent:
-    image: cdaringe/freshawair:agent
+    image: cdaringe/freshawair
     networks:
       - fresh
     init: true
-    command: ./Agent.exe --poll-duration=60 --db-host=freshdb
+    command: |
+      ./agent --db-host=freshdb --awair-endpoint=http://192.168.3.2/air-data/latest --awair-endpoint=http://192.168.3.3/air-data/latest
     restart: "on-failure"
     logging:
       driver: json-file
