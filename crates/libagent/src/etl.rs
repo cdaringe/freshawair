@@ -50,7 +50,7 @@ async fn open_conn(conn: Connection<Socket, NoTlsStream>) -> Result<(), crate::e
 
 async fn etl_each(config: &Config, client: &Client) -> Result<(), crate::error::Error> {
     for (index, endpoint) in config.awair_endpoint.iter().enumerate() {
-        etl(endpoint, index.try_into().unwrap(), &client, config).await?;
+        etl(endpoint, index.try_into().unwrap(), client, config).await?;
     }
     Ok(())
 }

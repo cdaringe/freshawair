@@ -23,8 +23,9 @@ impl Config {
         config.awair_endpoint = config
             .awair_endpoint
             .iter()
+            .flat_map(|x| x.split(','))
             .map(|x| x.to_string())
-            .collect();
+            .collect::<Vec<String>>();
         println!("{:?}", config.awair_endpoint);
         config
     }
