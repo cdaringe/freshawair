@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -20,14 +23,16 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "datasource": "Postgres",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P44368ADAD746BC27"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -35,6 +40,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -46,6 +54,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineStyle": {
               "fill": "solid"
@@ -95,14 +104,20 @@
             "mean"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [
             {
@@ -162,6 +177,10 @@
           ]
         },
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [
             {
@@ -225,7 +244,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "Postgres",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P44368ADAD746BC27"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -233,6 +255,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -244,6 +269,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 2,
             "pointSize": 5,
@@ -290,14 +316,20 @@
             "mean"
           ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [
             {
@@ -357,6 +389,10 @@
           ]
         },
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [
             {
@@ -420,13 +456,19 @@
       "type": "timeseries"
     },
     {
-      "datasource": "Postgres",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P44368ADAD746BC27"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -438,6 +480,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 1,
             "pointSize": 5,
@@ -507,14 +550,20 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -556,6 +605,10 @@
           ]
         },
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [],
           "hide": false,
@@ -602,7 +655,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "Postgres",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P44368ADAD746BC27"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -610,6 +666,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -621,6 +680,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 2,
             "pointSize": 5,
@@ -666,14 +726,20 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -708,6 +774,10 @@
           ]
         },
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [],
           "hide": false,
@@ -744,11 +814,13 @@
         }
       ],
       "title": "Temp (F°)",
-      "transformations": [],
       "type": "timeseries"
     },
     {
-      "datasource": "Postgres",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P44368ADAD746BC27"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -756,6 +828,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -767,6 +842,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 2,
             "pointSize": 5,
@@ -804,22 +880,28 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 9
+        "x": 0,
+        "y": 17
       },
-      "id": 6,
+      "id": 9,
       "options": {
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -854,6 +936,10 @@
           ]
         },
         {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P44368ADAD746BC27"
+          },
           "format": "time_series",
           "group": [],
           "hide": false,
@@ -890,13 +976,11 @@
         }
       ],
       "title": "VOCs",
-      "transformations": [],
       "type": "timeseries"
     }
   ],
   "refresh": false,
-  "schemaVersion": 31,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": []
@@ -909,5 +993,6 @@
   "timezone": "",
   "title": "freshawair",
   "uid": "d46HuYvnz",
-  "version": 5
+  "version": 3,
+  "weekStart": ""
 }
