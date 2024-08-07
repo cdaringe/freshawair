@@ -11,7 +11,7 @@ export const tasks: Tasks = {
   db: {
     fn: async ({ sh }) => {
       await sh(`docker-compose ${composeDevArgs} down freshdb -f`).catch(
-        () => {}
+        () => {},
       );
       await sh(`docker-compose ${composeDevArgs} up freshdb`).catch(() => {});
     },
@@ -19,7 +19,7 @@ export const tasks: Tasks = {
   grafana: {
     fn: async ({ sh }) => {
       await sh(`docker-compose ${composeDevArgs} down grafana -f`).catch(
-        () => {}
+        () => {},
       );
       await sh(`docker-compose ${composeDevArgs} up grafana`).catch(() => {});
     },
@@ -28,7 +28,7 @@ export const tasks: Tasks = {
     fn: async ({ sh }) => {
       const copyQ = "-c '\\copy sensor_stats from STDIN with(format csv)'";
       await sh(
-        `rad db:emitseeddata | docker exec -i ${containerName} psql -U ${dbname} ${dbuser} ${copyQ}`
+        `rad db:emitseeddata | docker exec -i ${containerName} psql -U ${dbname} ${dbuser} ${copyQ}`,
       );
     },
   },

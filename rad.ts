@@ -16,7 +16,7 @@ const startAgent: Task = [
 
 // run `rad --list` to see all tasks
 export const tasks: Tasks = {
-  ...{ b: build, build, },
+  ...{ b: build, build },
   ...{ startAgent, sa: startAgent },
   ...{ format, f: format },
   ...dbTasks,

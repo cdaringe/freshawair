@@ -16,7 +16,7 @@ export const deploy: Task = {
         `--exclude-from=".rsyncignore"`,
         `${Deno.cwd()}/`,
         `${sshUser}@${ip}:${destDir}/`,
-      ].join(" ")
+      ].join(" "),
     );
     const cmd = [
       `cd ${destDir}`,
