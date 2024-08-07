@@ -3,3 +3,6 @@ services:
   freshdb:
     volumes:
       - ../.freshdb:/var/lib/postgresql/data
+  grafana:
+    volumes:
+      - ../.freshdb_grafanadb:/var/lib/grafana/grafana.db

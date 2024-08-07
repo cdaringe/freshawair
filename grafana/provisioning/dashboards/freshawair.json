@@ -746,6 +746,152 @@
       "title": "Temp (F°)",
       "transformations": [],
       "type": "timeseries"
+    },
+    {
+      "datasource": "Postgres",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  voc AS Grant\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '0'\nORDER BY 1",
+          "refId": "Grant",
+          "select": [
+            [
+              {
+                "params": [
+                  "voc"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "voc"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "sensor_stats",
+          "timeColumn": "\"timestamp\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  \"timestamp\" AS \"time\",\n  voc AS Malcom\nFROM sensor_stats\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  sensor_index = '1'\nORDER BY 1",
+          "refId": "Malcom",
+          "select": [
+            [
+              {
+                "params": [
+                  "voc"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "voc"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "sensor_stats",
+          "timeColumn": "\"timestamp\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "VOCs",
+      "transformations": [],
+      "type": "timeseries"
     }
   ],
   "refresh": false,

@@ -6,6 +6,7 @@ _esy
 .github
 .vscode
 db.init
+docker-compose.*
 esy.lock
 grafana
 img
