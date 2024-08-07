@@ -14,9 +14,12 @@ const startAgent: Task = [
   "--db-port=5432",
 ].join(" ");
 
+const dev = `docker-compose -f docker-compose.dev.yml -f docker-compose.yml up`;
+
 // run `rad --list` to see all tasks
 export const tasks: Tasks = {
   ...{ b: build, build },
+  ...{ d: dev, dev },
   ...{ startAgent, sa: startAgent },
   ...{ format, f: format },
   ...dbTasks,
