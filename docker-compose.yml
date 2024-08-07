@@ -26,7 +26,7 @@ services:
       - fresh
     init: true
     command: |
-      --db-host=freshdb --awair-endpoint=http://192.168.3.2/air-data/latest --awair-endpoint=http://192.168.3.3/air-data/latest
+      --db-host=freshdb --awair-endpoint=http://grant.awair/air-data/latest --awair-endpoint=http://malcom.awair/air-data/latest
     restart: "on-failure"
     logging:
       driver: json-file

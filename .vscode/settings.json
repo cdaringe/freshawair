@@ -1,7 +1,3 @@
 {
-  "ocaml.sandbox": {
-    "kind": "opam",
-    "switch": "4.12.0+domains"
-  },
   "deno.enable": true
 }

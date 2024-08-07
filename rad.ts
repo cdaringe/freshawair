@@ -8,15 +8,15 @@ const build = `docker build -t cdaringe/freshawair .`;
 
 const startAgent: Task = [
   "cargo run -p agent --",
-  "--awair-endpoint=http://192.168.3.2/air-data/latest", // grant
-  "--awair-endpoint=http://192.168.3.3/air-data/latest", // malcom
+  "--awair-endpoint=http://grant.awair/air-data/latest", // local
+  "--awair-endpoint=http://malcom.awair/air-data/latest",
   "--db-host=localhost",
   "--db-port=5432",
 ].join(" ");
 
 // run `rad --list` to see all tasks
 export const tasks: Tasks = {
-  ...{ b: build, build },
+  ...{ b: build, build, },
   ...{ startAgent, sa: startAgent },
   ...{ format, f: format },
   ...dbTasks,

@@ -19,6 +19,13 @@ pub struct Config {
 
 impl Config {
     pub fn get_parsed() -> Self {
-        Config::parse()
+        let mut config = Config::parse();
+        config.awair_endpoint = config
+            .awair_endpoint
+            .iter()
+            .map(|x| x.to_string())
+            .collect();
+        println!("{:?}", config.awair_endpoint);
+        config
     }
 }

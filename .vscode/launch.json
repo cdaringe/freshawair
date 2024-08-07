@@ -15,9 +15,12 @@
           "kind": "bin"
         }
       },
+      "env": {
+        "AWAIR_ENDPOINT": "grant.awair,malcom.awair",
+      },
       "args": [
-        "--awair-endpoint=foo.com",
-        "--awair-endpoint=grr.qux",
+        // "--awair-endpoint=foo.com",
+        // "--awair-endpoint=grr.qux",
         "--db-host=bar.com",
         "--db-port=1234"
       ],

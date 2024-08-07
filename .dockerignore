@@ -5,7 +5,10 @@ _esy
 .git
 .github
 .vscode
+db.init
 esy.lock
+grafana
+img
 node_modules
 public
 target
