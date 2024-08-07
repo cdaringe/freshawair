@@ -4,6 +4,8 @@ _esy
 .freshdb
 .git
 .github
+.rad
+.rsyncignore
 .vscode
 db.init
 docker-compose.*
@@ -12,4 +14,8 @@ grafana
 img
 node_modules
 public
+rad
+rad.ts
+readme.md
+renovate.json
 target
