@@ -287,6 +287,7 @@
             }
           },
           "mappings": [],
+          "max": 2000,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -452,7 +453,7 @@
           ]
         }
       ],
-      "title": "CO2",
+      "title": "CO2 (ppm)",
       "type": "timeseries"
     },
     {
@@ -651,7 +652,7 @@
           ]
         }
       ],
-      "title": "PM2.5 (3m moving avg)",
+      "title": "PM2.5 (µg/m³, 3m moving avg)",
       "type": "timeseries"
     },
     {
@@ -986,13 +987,13 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "freshawair",
   "uid": "d46HuYvnz",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }
