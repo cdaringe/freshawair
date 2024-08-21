@@ -8,10 +8,13 @@ services:
     networks:
       - fresh
     environment:
+      # https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/feature-toggles/
+      # GF_<SECTION>_<KEY>=value
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_DISABLE_LOGIN_FORM=true
       - GF_AUTH_ORG_ROLE=Editor
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_SECURITY_ALLOW_EMBEDDING=true
       # - GF_AUTH_ANONYMOUS_ORG_NAME=fresh
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
@@ -20,6 +23,7 @@ services:
         condition: on-failure
         delay: 300s
         window: 120s
+
   freshagent:
     image: cdaringe/freshawair
     networks:
