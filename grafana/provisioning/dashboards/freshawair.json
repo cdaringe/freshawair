@@ -483,7 +483,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "smooth",
-            "lineWidth": 1,
+            "lineWidth": 4,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1020,6 +1020,6 @@
   "timezone": "",
   "title": "freshawair",
   "uid": "d46HuYvnz",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
