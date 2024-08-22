@@ -59,7 +59,7 @@
             "lineStyle": {
               "fill": "solid"
             },
-            "lineWidth": 2,
+            "lineWidth": 4,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -271,7 +271,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "smooth",
-            "lineWidth": 2,
+            "lineWidth": 4,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -683,7 +683,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "smooth",
-            "lineWidth": 2,
+            "lineWidth": 4,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -845,7 +845,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "smooth",
-            "lineWidth": 2,
+            "lineWidth": 4,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -978,6 +978,32 @@
       ],
       "title": "VOCs",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P44368ADAD746BC27"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 10,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<style>\n\ndiv[class$=\"panel-title\"] h2{\n  font-size: 18px;\n  font-weight: 700;\n}\n\ndiv [class$=\"panel-title\"] {\n  height: 25px;\n  line-height: 25px;\n}\n\n</style>",
+        "mode": "html"
+      },
+      "pluginVersion": "11.1.4",
+      "title": "CSS Overrides",
+      "transparent": true,
+      "type": "text"
     }
   ],
   "refresh": false,
