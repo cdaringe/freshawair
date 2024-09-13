@@ -260,6 +260,7 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "axisSoftMax": 1000,
             "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 0,
@@ -472,6 +473,7 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "axisSoftMax": 5,
             "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 0,
@@ -834,6 +836,7 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "axisSoftMax": 800,
             "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 0,
@@ -1020,6 +1023,6 @@
   "timezone": "",
   "title": "freshawair",
   "uid": "d46HuYvnz",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }
