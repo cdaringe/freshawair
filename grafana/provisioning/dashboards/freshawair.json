@@ -59,7 +59,7 @@
             "lineStyle": {
               "fill": "solid"
             },
-            "lineWidth": 4,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -272,7 +272,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "smooth",
-            "lineWidth": 4,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -319,7 +319,7 @@
           ],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -459,6 +459,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "grafana-postgresql-datasource",
         "uid": "P44368ADAD746BC27"
       },
@@ -485,7 +486,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "smooth",
-            "lineWidth": 4,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -554,7 +555,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -567,6 +568,7 @@
             "type": "grafana-postgresql-datasource",
             "uid": "P44368ADAD746BC27"
           },
+          "editorMode": "code",
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -685,7 +687,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "smooth",
-            "lineWidth": 4,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -730,7 +732,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -848,7 +850,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "smooth",
-            "lineWidth": 4,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -893,7 +895,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -1003,7 +1005,7 @@
         "content": "<style>\n\ndiv[class$=\"panel-title\"] h2{\n  font-size: 18px;\n  font-weight: 700;\n}\n\ndiv [class$=\"panel-title\"] {\n  height: 25px;\n  line-height: 25px;\n}\n\n</style>",
         "mode": "html"
       },
-      "pluginVersion": "11.1.4",
+      "pluginVersion": "11.2.0",
       "title": "CSS Overrides",
       "transparent": true,
       "type": "text"
@@ -1016,13 +1018,13 @@
     "list": []
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "freshawair",
   "uid": "d46HuYvnz",
-  "version": 4,
+  "version": 7,
   "weekStart": ""
 }
