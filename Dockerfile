@@ -1,5 +1,5 @@
 # FROM --platform=$BUILDPLATFORM rust as base
-FROM rust:1.84.1 as base
+FROM rust:1.85.0 as base
 RUN apt-get install libssl-dev openssl
 WORKDIR /app
 
