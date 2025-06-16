@@ -12,4 +12,4 @@ libawair = { path = "../libawair" }
 tokio = { version = "1.39.2", features = ["full"] }
 tokio-postgres = "0.7.7"
 # time = "0.3.20"
-speedate = "0.15.0"
+speedate = "0.16.0"
