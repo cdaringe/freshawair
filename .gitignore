@@ -13,3 +13,4 @@ fresh.arm
 public
 .git
 target
+.DS_Store

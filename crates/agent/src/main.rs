@@ -1,4 +1,7 @@
-use libagent::{config::Config, etl::etl_all};
+use libagent::{
+    config::Config,
+    etl::{AccumulatedReading, collect_readings, flush_accumulated_readings},
+};
 use std::error::Error;
 use tokio::time::{self, Duration};
 
@@ -13,15 +16,43 @@ async fn main() -> Result<(), Box<dyn Error>> {
     } else {
         interval.tick().await;
     }
+    let mut accumulated_readings: Vec<AccumulatedReading> = Vec::new();
+    let mut interval_count = 0u32;
+    const FLUSH_INTERVAL: u32 = 30;
+
     loop {
         interval.tick().await;
-        let () = etl_all(&config)
-            .await
-            .or_else(|e| {
-                eprintln!("{:?}", e);
-                Ok::<(), libagent::error::Error>(())
-            })
-            .map(|_| println!("ok"))
-            .expect("unit");
+        interval_count += 1;
+
+        // Collect readings on every interval
+        match collect_readings(&config).await {
+            Ok(mut readings) => {
+                accumulated_readings.append(&mut readings);
+                println!(
+                    "Collected {} readings (total accumulated: {})",
+                    readings.len(),
+                    accumulated_readings.len()
+                );
+            }
+            Err(e) => {
+                eprintln!("Failed to collect readings: {:?}", e);
+            }
+        }
+
+        // Flush accumulated readings every 30 intervals
+        if interval_count % FLUSH_INTERVAL == 0 {
+            match flush_accumulated_readings(&accumulated_readings, &config).await {
+                Ok(()) => {
+                    println!(
+                        "Successfully flushed {} readings to database",
+                        accumulated_readings.len()
+                    );
+                    accumulated_readings.clear();
+                }
+                Err(e) => {
+                    eprintln!("Failed to flush readings: {:?}", e);
+                }
+            }
+        }
     }
 }

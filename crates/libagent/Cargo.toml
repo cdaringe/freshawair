@@ -1,15 +1,12 @@
 [package]
 name = "libagent"
 version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+edition.workspace = true
+rust-version.workspace = true
 
 [dependencies]
-# chrono = "0.4.24"
-clap = { version = "4.5.13", features = ["env"] }
+clap = { version = "4.5.20", features = ["env"] }
 libawair = { path = "../libawair" }
-tokio = { version = "1.39.2", features = ["full"] }
-tokio-postgres = "0.7.7"
-# time = "0.3.20"
-speedate = "0.14.0"
+tokio = { version = "1.41", features = ["full"] }
+tokio-postgres = "0.7.12"
+speedate = "0.14.4"

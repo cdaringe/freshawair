@@ -1,7 +1,12 @@
 [workspace]
+resolver = "2"
 
 members = [
     "crates/agent",
     "crates/libagent",
     "crates/libawair",
 ]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.89.0"

@@ -16,7 +16,9 @@
         }
       },
       "env": {
-        "AWAIR_ENDPOINT": "grant.awair,malcom.awair",
+        "IS_DARWIN": "true",
+        "AWAIR_ENDPOINT": "http://grant.awair/air-data/latest",
+        "POLL_DURATION_S": "5",
       },
       "args": [
         // "--awair-endpoint=foo.com",

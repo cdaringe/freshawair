@@ -3,6 +3,7 @@ import type { Task } from "./common.ts";
 export const deploy: Task = {
   dependsOn: [],
   async fn({ sh, logger }) {
+    logger.warning(`Deployment issues with docker? See https://superuser.com/a/1769106`);
     const ip = Deno.env.get("NAS_IP");
     const sshUser = "cdaringe";
     if (!ip) throw new Error(`missing NAS_IP env var`);

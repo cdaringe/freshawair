@@ -1,11 +1,10 @@
 [package]
 name = "agent"
 version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+edition.workspace = true
+rust-version.workspace = true
 
 [dependencies]
-clap = { version = "4.5.13", features = ["derive"] }
+clap = { version = "4.5.20", features = ["derive"] }
 libagent = { path = "../libagent" }
-tokio = { version = "1.39.2", features = ["full"] }
+tokio = { version = "1.41", features = ["full"] }
