@@ -9,4 +9,4 @@ clap = { version = "4.5.20", features = ["env"] }
 libawair = { path = "../libawair" }
 tokio = { version = "1.41", features = ["full"] }
 tokio-postgres = "0.7.12"
-speedate = "0.14.4"
+speedate = "0.17.0"
