@@ -21,6 +21,8 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
       # mount the grafana db, strictly because grafana db migrations are
       # extremely slow, making boot time 5m+ without a pre-migrated db.
+      # @warning you may have perms issue on first boot. widen 'em:
+      #   chmod -R 765 ./data
       - ./grafana/data:/var/lib/grafana
     deploy:
       restart_policy:
