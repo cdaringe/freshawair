@@ -27,6 +27,9 @@ impl Config {
             .map(|x| x.to_string())
             .collect::<Vec<String>>();
         println!("{:?}", config.awair_endpoint);
+        if config.awair_endpoint.is_empty() {
+            panic!("At least one --awair-endpoint must be provided");
+        }
         config
     }
 }

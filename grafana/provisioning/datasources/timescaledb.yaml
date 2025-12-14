@@ -1,14 +1,18 @@
+prune: true
 # https://grafana.com/docs/grafana/latest/datasources/postgres/#configure-the-data-source-with-provisioning
 apiVersion: 1
+# https://grafana.com/docs/grafana/latest/administration/provisioning/
 datasources:
-  - name: Postgres
+  - name: PostgresFresh
     type: postgres
     url: freshdb:5432
     database: fresh
     user: fresh
     secureJsonData:
       password: "fresh"
+    isDefault: true
     jsonData:
+      database: postgres
       sslmode: "disable"
       maxOpenConns: 0
       maxIdleConns: 2

@@ -27,12 +27,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // Collect readings on every interval
         match collect_readings(&config).await {
             Ok(mut readings) => {
-                accumulated_readings.append(&mut readings);
                 println!(
                     "Collected {} readings (total accumulated: {})",
                     readings.len(),
-                    accumulated_readings.len()
+                    accumulated_readings.len() + readings.len()
                 );
+                accumulated_readings.append(&mut readings);
             }
             Err(e) => {
                 eprintln!("Failed to collect readings: {:?}", e);
@@ -40,7 +40,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
 
         // Flush accumulated readings every 30 intervals
-        if interval_count % FLUSH_INTERVAL == 0 {
+        if interval_count.is_multiple_of(FLUSH_INTERVAL) {
             match flush_accumulated_readings(&accumulated_readings, &config).await {
                 Ok(()) => {
                     println!(

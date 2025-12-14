@@ -6,6 +6,10 @@
   "automerge": true,
   "packageRules": [
     {
+      "matchFileNames": ["**/docker-compose*.yml", "**/docker-compose*.yaml"],
+      "enabled": false
+    },
+    {
       "groupName": "major dependencies",
       "matchUpdateTypes": [
         "major",

@@ -15,6 +15,7 @@ async fn collect_reading(
     index: i16,
     _config: &Config,
 ) -> Result<AccumulatedReading, Error> {
+    println!("Collecting reading from {}", url);
     match get_stat(url).await {
         Ok(stat) => Ok(AccumulatedReading {
             sensor_index: index,
@@ -137,9 +138,4 @@ pub async fn flush_accumulated_readings(
       x = flush_readings(readings, &client) => { x }
       y = open_conn(conn) => { y }
     }
-}
-
-pub async fn etl_all(config: &Config) -> Result<(), crate::error::Error> {
-    let readings = collect_readings(config).await?;
-    flush_accumulated_readings(&readings, config).await
 }
