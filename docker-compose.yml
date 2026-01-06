@@ -26,7 +26,7 @@ services:
       - ./grafana/data:/var/lib/grafana
     deploy:
       restart_policy:
-        condition: on-failure
+        condition: unless-stopped
         delay: 300s
         window: 120s
 
